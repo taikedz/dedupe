@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-LIBPATH="%LIBPATH%"
+DDLIBPATH="${DDLIBPATH:-%DDLIBPATH%}"
 
 hasbin() {
     which "$1" &>/dev/null
@@ -9,6 +9,7 @@ hasbin() {
 for pybin in python3 python34 python35 python36 python37 python38 python; do
     if hasbin "$pybin" ; then
         PYBIN="$pybin"
+        break
     fi
 done
 
@@ -17,4 +18,4 @@ if [[ -z "$PYBIN" ]]; then
     exit 1
 fi
 
-exec "$PYBIN" "$LIBPATH/dedupe/dedupe.py"
+exec "$PYBIN" "$DDLIBPATH/dedupe/dedupe.py" "$@"

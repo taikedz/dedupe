@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-LIBPATH="/usr/local/lib"
+DDLIBPATH="/usr/local/lib"
 BINPATH="/usr/local/bin"
 
 # ======
@@ -24,9 +24,9 @@ else
 fi
 
 if [[ "$UID" != 0 ]]; then
-    LIBPATH="$HOME/.local/lib"
+    DDLIBPATH="$HOME/.local/lib"
     BINPATH="$HOME/.local/bin"
-    mkdir -p "$LIBPATH"
+    mkdir -p "$DDLIBPATH"
     mkdir -p "$BINPATH"
 
     if [[ ! "$PATH" =~ "$HOME/.local/bin" ]]; then
@@ -35,5 +35,5 @@ if [[ "$UID" != 0 ]]; then
     fi
 fi
 
-rsync -a "./lib/dedupe/" "$LIBPATH/dedupe/"
-sed -e "s|%LIBPATH%|$LIBPATH|"  "./bin/dedupe" > "$BINPATH/dedupe"
+rsync -a "./lib/dedupe/" "$DDLIBPATH/dedupe/"
+sed -e "s|%DDLIBPATH%|$DDLIBPATH|"  "./bin/dedupe" > "$BINPATH/dedupe"
