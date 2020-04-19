@@ -1,5 +1,18 @@
 # Implementation notes
 
+## Files
+
+This program is implemented as a set of Python scripts written with Python 3 in mind
+
+The actual program is in `libs/dedupe` ; the corresponding tests are in `lib/test_dedupe`
+
+The wrapper script in `bin/dedupe` serves two purposes:
+
+* a single point of entry that does not require reworking paths here and there - any path re-jigging is set inside the script on-run, not in the permanent environment at install-time
+* the script tries to select the correct python command for cross-platform - on Ubuntu it is simply `python3` but in Fedora this could be `python37` or more generally `python`
+
+The install script places and enables the libs and command files accordingly.
+
 ## Tree walk
 
 For each folder provided, descend and

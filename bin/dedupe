@@ -1,3 +1,20 @@
 #!/usr/bin/env bash
 
-exec %PYTHONBIN% %LIBPATH%/dedupe/dedupe.py
+LIBPATH="%LIBPATH%"
+
+hasbin() {
+    which "$1" &>/dev/null
+}
+
+for pybin in python3 python34 python35 python36 python37 python38 python; do
+    if hasbin "$pybin" ; then
+        PYBIN="$pybin"
+    fi
+done
+
+if [[ -z "$PYBIN" ]]; then
+    echo "FATAL: Cannot find a python command to run !"
+    exit 1
+fi
+
+exec "$PYBIN" "$LIBPATH/dedupe/dedupe.py"
