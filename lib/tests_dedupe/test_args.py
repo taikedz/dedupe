@@ -8,7 +8,7 @@ import ddargparse as ddap
 
 class DDArgTests(unittest.TestCase):
     def test_resolvewalk(self):
-        print("Resolve/walk tests")
+        print("\nResolve/walk tests")
 
         # These should be fine
         self.assertIsInstance(ddap.parseArguments(["--resolve"]), argparse.Namespace)

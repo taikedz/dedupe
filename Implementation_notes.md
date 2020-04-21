@@ -39,6 +39,12 @@ For each folder provided, descend and
 * Offer to delete directories
 * Offer to merge
 
+### Resolver files
+
+To ensure the program remains extendable, we create separate resolution modules. It should be possible to later add new resolution methods as desired.
+
+A `GenericResolver.DDResolver` class provides some utility implementation; the further details are otherwise left to the resolvers. The other reason to use classes was simply to enable testability...
+
 ### Deletion
 
 * Ask which file to keep
