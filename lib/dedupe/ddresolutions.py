@@ -2,9 +2,16 @@ import importlib
 
 import ddbaseutils
 
+RESOLVERS = [
+    "FileDelete",
+    "DirDelete",
+    "DirMerge",
+    "Skip",
+]
+
 class DDResolutions:
 
-    def __init__(self, resolvers=["FileDelete", "DirDelete", "DirMerge"], path="resolvers"):
+    def __init__(self, resolvers=RESOLVERS, path="resolvers"):
         """Arguments:
 
         resolvers - a list of resolver names (optional)

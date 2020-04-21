@@ -31,5 +31,9 @@ class MainResolutionsTest(unittest.TestCase):
         print("Selected <<%s>>" % str(handler))
         self.assertIsInstance(handler, resolvers.DirMerge.DirMergeResolver)
 
+        handler = ddres.getUserResolver(MockIdentity(), default_selection=3 )
+        print("Selected <<%s>>" % str(handler))
+        self.assertIsInstance(handler, resolvers.Skip.SkipResolver)
+
 if __name__ == "__main__":
     unittest.main()
