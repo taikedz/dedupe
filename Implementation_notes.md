@@ -83,12 +83,12 @@ The following is the basic structure of database entries, allowing a decoupling 
 * FileIdentity
     * id : uint / PRI
     * byte_size : uint / long / IDX
-    * small_hash : char(64) / IDX
-    * full_hash : char(64) / IDX
+    * small_hash : char(32) / IDX
+    * full_hash : char(32) / IDX
 
 * FilePath
     * id : uint / PRI
-    * path : blob
+    * path : blob / IDX?
     * top_path : uint / EXT
     * parent_path : uint / EXT
     * identity : uint / EXT
