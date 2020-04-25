@@ -4,16 +4,18 @@ Utility to find duplicate files.
 
 Features:
 
-* Save duplicates information into a database file for staged work sessions
+* Save duplicates information into a database file for staged work sessions and custom analysis
+    * SQLite primary target
 * Directory walking and pre-processing handlers
     * Ignore - provide a list of file and directory names to ignore. Takes precedence over auto-deletion
     * Auto-deletion - provide list of file and directory names to automatically delete during analysis, such as `Thumbs.db` and `.DS_Store` files. or `__pycache__` directories.
+    * Repository detection - detect Git and SVN repositories, and exclude from analysis (extendable to general project folder detection, via config)
 * Resolution handlers:
     * Delete invidivdual files
     * Delete directories where duplicates are found
     * Merge parent directories of files - consolidate files and folders from source folder where duplicates are found to a destination folder, then delete source folder
     * Skip altogether
-* Extensible - `dedupe` is written with extension in mind, to allow adding new handlers over time.
+* Extensible - `dedupe` is written with extension in mind via its handlers.
 
 ## Usage
 

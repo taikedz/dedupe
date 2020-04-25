@@ -44,9 +44,9 @@ The default handlers have the following effects:
     * registerd on `ON_ENCOUNTER_DIR`, causing the handling of a directory. This is the default and initial behaviour for all directories
     * Cause processing to occur on the directory
 
-* `SimpleRepositoryCheck`
+* `ProjectNameCheck`
     * registered to `ON_ENTER_DIR`, which is the first event on descending into a directory
-    * if a configured named directory is found at top level, immediately raises a `StateControlException` to prevent tinkering with internals of a source control repository
+    * if a configured named directory or file is found at top level, immediately raises a `StateControlException` to prevent tinkering with internals of a project directory - e.g. source control, PhotoShop, Kdenlive, etc
 
 * `IgnoreCheck`
     * registered on `ON_ENCOUNTER_FILE`, `ON_ENCOUNTER_DIR`, to check if a file or folder should be ignored
@@ -173,11 +173,13 @@ config:
     encounters:
         SymLinkCheck:
             follow: False
-        SimpleRepositoryCheck: # Simple repo detection by presence of a dir/file, extenable via config
+        ProjectNameCheck: # Simple project folder detection by presence of a dir/file, extenable via config
             dirs:
             - ".git"
             - ".svn"
             files:
+            - "*.kdenlive" # Kdenlive projects
+            - "*.aup" # Audacity projects
 ```
 
 # Database
