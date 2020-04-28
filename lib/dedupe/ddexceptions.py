@@ -4,6 +4,8 @@ import sys
 
 DD_ERR_OPTIONS = 10
 
+DD_ERR_WALKERCONFIG = 50
+
 ## =======
 
 class DDError(Exception):
@@ -14,13 +16,23 @@ class DDError(Exception):
     def terminate(self):
         print("=== FATAL ERROR ===")
         print(str(self) )
-        exit(self.exitcode)
+        sys.exit(self.exitcode)
 
     def warn(self):
         print("--- warning ---",end='')
         print(str(self) )
+        return self.exitcode
 
+class DDStateControlException(Exception):
+    def __init__(self, message):
+        Exception.__init__(self, message)
+
+## --------
 
 class DDOptionsError(DDError):
     def __init__(self, message):
-        DDError.__init__(self, message, DD_ERR_OPTIONS)
+        DDError.__init__(self, message, exitcode=DD_ERR_OPTIONS)
+
+class DDWalkerConfigException(DDError):
+    def __init__(self, message):
+        DDError.__init__(self, message, exitcode=DD_ERR_WALKERCONFIG)

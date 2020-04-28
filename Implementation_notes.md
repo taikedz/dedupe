@@ -19,14 +19,14 @@ The tree is walked breadth-first.
 
 Several events are fired, onto which handlers can be attached. Encounter handlers can register themselves against the events, and are fired in registration order.
 
-If a handler is called, it has the option to return either `None` if it took no action, or a `str` message detailing what action was taken. If the processing indicates that no further processing should happen on the item it processed, it should raise a `StateControlException`, the bahviour for which is defined below
+If a handler is called, it has the option to return either `None` if it took no action, or a `str` message detailing what action was taken. If the processing indicates that no further processing should happen on the item it processed, it should raise a `DDStateControlException`, the bahviour for which is defined below
 
 * On entering folder `ON_ENTER_DIR`
-    * `StateControlException` - causes the processor to back out of the directory entirely
+    * `DDStateControlException` - causes the processor to back out of the directory entirely
 * On encountering directory `ON_ENCOUNTER_DIR`
-    * `StateControlException` - causes the processor to not call any more handlers on the directory
+    * `DDStateControlException` - causes the processor to not call any more handlers on the directory
 * On encountering file `ON_ENCOUNTER_FILE`
-    * `StateControlException` - causes the processor to not call any more handlers on the file
+    * `DDStateControlException` - causes the processor to not call any more handlers on the file
 
 ## Encounter handling
 
@@ -46,7 +46,7 @@ The default handlers have the following effects:
 
 * `ProjectNameCheck`
     * registered to `ON_ENTER_DIR`, which is the first event on descending into a directory
-    * if a configured named directory or file is found at top level, immediately raises a `StateControlException` to prevent tinkering with internals of a project directory - e.g. source control, PhotoShop, Kdenlive, etc
+    * if a configured named directory or file is found at top level, immediately raises a `DDStateControlException` to prevent tinkering with internals of a project directory - e.g. source control, PhotoShop, Kdenlive, etc
 
 * `IgnoreCheck`
     * registered on `ON_ENCOUNTER_FILE`, `ON_ENCOUNTER_DIR`, to check if a file or folder should be ignored
@@ -54,7 +54,7 @@ The default handlers have the following effects:
     * if the file is a folder, do not descend into it
 
 * `DeleteCheck`
-    * registered on `ON_ENCOUNTER_FILE`, `ON_ENTER_DIR`, to check if a file or folder should be deleted
+    * registered on `ON_ENCOUNTER_FILE`, `ON_ENCOUNTER_DIR`, to check if a file or folder should be deleted
     * if the file or folder is in the auto-delete list, remove it
 
 * `Identify`
