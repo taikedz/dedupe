@@ -40,10 +40,6 @@ The default handlers have the following effects:
     * The default implementation probably won't deal with symlinks properly
     * This can be configured to be turned off - at user's own peril!
 
-* `Descend`
-    * registerd on `ON_ENCOUNTER_DIR`, causing the handling of a directory. This is the default and initial behaviour for all directories
-    * Cause processing to occur on the directory
-
 * `ProjectNameCheck`
     * registered to `ON_ENTER_DIR`, which is the first event on descending into a directory
     * if a configured named directory or file is found at top level, immediately raises a `DDStateControlException` to prevent tinkering with internals of a project directory - e.g. source control, PhotoShop, Kdenlive, etc

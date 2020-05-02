@@ -4,7 +4,8 @@ import sys
 
 DD_ERR_OPTIONS = 10
 
-DD_ERR_WALKERCONFIG = 50
+DD_ERR_WALKER = 50
+DD_ERR_WALKERCONFIG = 51
 
 ## =======
 
@@ -23,16 +24,20 @@ class DDError(Exception):
         print(str(self) )
         return self.exitcode
 
-class DDStateControlException(Exception):
+class ProcessorSkipException(Exception):
     def __init__(self, message):
         Exception.__init__(self, message)
 
 ## --------
 
-class DDOptionsError(DDError):
+class OptionsError(DDError):
     def __init__(self, message):
         DDError.__init__(self, message, exitcode=DD_ERR_OPTIONS)
 
-class DDWalkerConfigException(DDError):
+class WalkerConfigException(DDError):
     def __init__(self, message):
         DDError.__init__(self, message, exitcode=DD_ERR_WALKERCONFIG)
+
+class WalkerException(DDError):
+    def __init__(self, message):
+        DDError.__init__(self, message, exitcode=DD_ERR_WALKER)
