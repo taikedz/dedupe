@@ -24,7 +24,7 @@ class DirWalker:
         log.debug("Created a walker on <%s>" % (top_dir))
 
     def walk(self):
-        """ An iterative breadth-first walker, for triggering relevant events appropriately.
+        """ An iterative walker, for triggering relevant events appropriately.
         """
         if not self.walking:
             self.walking = True
@@ -62,7 +62,9 @@ class DirWalker:
     def __processEvent(self, event_name, current_item):
         log.debug("Event [%s] :: %s" % (event_name, current_item.getName()) )
         for handler in self.handlers[event_name]:
-            handler.process(current_item)
+            result = handler.process(current_item)
+            if result != None:
+                log.info(result)
 
     def __pop(self):
         return WalkerItem(self.file_stack.pop(0) , self.top_dir)
