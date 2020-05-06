@@ -5,7 +5,10 @@ set -euo pipefail
 cd "$(dirname "$0")"
 
 if [[ -z "$*" ]]; then
-    echo -e "$(basename "$0") [FILE | --all | --testfiles]\n\nSpecify a test file to run,\n  or '--all' to seek for and test all source files,\n  or '--testfiles' to run all existing test files."
+    echo -e "$(basename "$0") [FILE | --list | --all | --testfiles]\n\nSpecify a test file to run,\n  or '--list' to list available test files,\n  or '--all' to seek for and test all source files,\n  or '--testfiles' to run all existing test files."
+
+elif [[ "$*" = "--list" ]]; then
+    ls test_*.py
 
 elif [[ "$*" = "--testfiles" ]]; then
     for testfile in ./test_*.py ; do
