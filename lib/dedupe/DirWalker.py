@@ -7,11 +7,7 @@ import logging
 
 import ddexceptions as DDE
 
-global log
-log = logging.Logger("dedupe")
-
-log.info("information")
-log.warning("a warning")
+log = logging.getLogger("dedupe")
 
 class DirWalker:
 
@@ -36,8 +32,8 @@ class DirWalker:
             raise DDE.WalkerException("Tried to call walker twice")
 
         while len(self.file_stack) > 0:
-            current_item = self.pop()
-            log.debug("Processing <%s> : <%s>" % (self.top_dir, current_item.getPath()) )
+            current_item = self.__pop()
+            log.debug("Processing <%s> : <%s>" % (self.top_dir, current_item.getFullPath()) )
 
             try:
                 if current_item.isdir():
@@ -54,7 +50,7 @@ class DirWalker:
                     log.debug("%i items: %s" % (len(dir_contents), str(dir_contents)) )
 
                     # Ensure each path is added with a full path
-                    self.file_stack[0:0] = [current_item.getFullPath() + child_path for chidl_path in dir_contents]
+                    self.file_stack[0:0] = ["%s%s%s" % (current_item.getFullPath(), os.path.sep, child_path) for child_path in dir_contents]
                     log.debug("File stack now has %i items to process." % (len(self.file_stack)))
                 else:
                     self.__processEvent("EVT_ENCOUNTER_FILE", current_item)
@@ -69,7 +65,7 @@ class DirWalker:
             handler.process(current_item)
 
     def __pop(self):
-        return WalkerItem(self.remove() , self.top_dir)
+        return WalkerItem(self.file_stack.pop(0) , self.top_dir)
 
 class WalkerItem:
     """ Convenience filesystem node representation
@@ -78,8 +74,14 @@ class WalkerItem:
     """
 
     def __init__(self, path, top_dir):
+        if not os.path.exists(path):
+            raise FileNotFoundError("<%s> does not exist" % path)
+
         self.path = path
         self.top_dir = top_dir
+
+    def __str__(self):
+        return self.getFullPath()
 
     def getTopDirPath(self):
         return self.top_dir
