@@ -15,16 +15,14 @@ The install script places and enables the libs and command files accordingly.
 
 ## Tree walk
 
-The tree is walked breadth-first.
-
 Several events are fired, onto which handlers can be attached. Encounter handlers can register themselves against the events, and are fired in registration order.
 
 If a handler is called, it has the option to return either `None` if it took no action, or a `str` message detailing what action was taken. If the processing indicates that no further processing should happen on the item it processed, it should raise a `ProcessorSkipException`, the bahviour for which is defined below
 
 * On entering folder `ON_ENTER_DIR`
-    * `ProcessorSkipException` - causes the processor to back out of the directory entirely
+    * `ProcessorSkipException` - causes the processor to skip the directory entirely, due for exmaple to its contents
 * On encountering directory `ON_ENCOUNTER_DIR`
-    * `ProcessorSkipException` - causes the processor to not call any more handlers on the directory
+    * `ProcessorSkipException` - causes the processor to not call any more handlers on the directory, due for example to its metadata (including its name)
 * On encountering file `ON_ENCOUNTER_FILE`
     * `ProcessorSkipException` - causes the processor to not call any more handlers on the file
 
