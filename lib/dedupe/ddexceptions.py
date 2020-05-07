@@ -2,7 +2,11 @@ import sys
 
 ## Codes - define here
 
+DD_ERR_NOTIMPLEMENTED = 255
+
 DD_ERR_OPTIONS = 10
+
+DD_ERR_PREFSLOADED = 11
 
 DD_ERR_WALKER = 50
 DD_ERR_WALKERCONFIG = 51
@@ -24,9 +28,21 @@ class DDError(Exception):
         print(str(self) )
         return self.exitcode
 
+class NotImplemented(DDError):
+    def __init__(self, message):
+        DDError.__init__(self, message, exitcode=DD_ERR_NOTIMPLEMENTED)
+
+## --------
+
 class ProcessorSkipException(Exception):
     def __init__(self, message):
         Exception.__init__(self, message)
+
+## --------
+
+class PreferencesLocked(DDError):
+    def __init__(self, message):
+        DDError.__init__(self, message, exitcode=DD_ERR_PREFSLOADED)
 
 ## --------
 

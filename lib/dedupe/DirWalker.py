@@ -25,6 +25,11 @@ class DirWalker:
 
     def walk(self):
         """ An iterative walker, for triggering relevant events appropriately.
+
+        The walker will trigger the following events, causing their handlers to be run:
+        - DirWalker.EVT_ENTER_DIR - when entering a directory, before adding its contents to the walk stack for processing
+        - DirWalker.EVT_ENCOUNTER_DIR - when a directory is found, before processing it
+        - DirWalker.EVT_ENCOUNTER_FILE - when a file is found, before processing it
         """
         if not self.walking:
             self.walking = True
@@ -60,13 +65,17 @@ class DirWalker:
                 pass
 
     def __processEvent(self, event_name, current_item):
+        """ Runs the handlers associated with the named event. If the handler returns a message, logs the message.
+        """
         log.debug("Event [%s] :: %s" % (event_name, current_item.getName()) )
         for handler in self.handlers[event_name]:
             result = handler.process(current_item)
             if result != None:
-                log.info(result)
+                log.info(str(result) )
 
     def __pop(self):
+        """ Returns a WalkerItem of the topmost item on the file stack. Removes that item from the stack.
+        """
         return WalkerItem(self.file_stack.pop(0) , self.top_dir)
 
 class WalkerItem:
@@ -86,25 +95,41 @@ class WalkerItem:
         return self.getFullPath()
 
     def getTopDirPath(self):
+        """ Return the path of the top directory being processed
+        """
         return self.top_dir
 
     def getFullPath(self):
+        """ Get the path name of the file, with the path from the top directory.
+        """
         return self.path
 
     def getName(self):
+        """ Get the file name of the current item, without its leading path
+        """
         return os.path.basename(self.path)
 
-    def getContents(self):
+    def getContents(self, full_paths=False):
         """ Get a listing of files and folders in the folder this WalkerItem represents
 
         The list is sorted by byte value.
+
+        If full_paths is True, prefixes all content names with the full path of the current item
         """
         contents = os.listdir(self.path)
         contents.sort()
+        
+        if full_paths:
+            contents = ["%s%s%s" % (self.getFullPath(), os.path.sep, child_path) for child_path in contents]
+
         return contents
 
     def isdir(self):
+        """ Returns True if the item is a directory
+        """
         return os.path.isdir(self.path)
 
     def islink(self):
+        """ Returns True if the item is a symlink
+        """
         return os.path.islink(self.path)
