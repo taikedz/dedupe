@@ -19,39 +19,39 @@ The tree is walked breadth-first.
 
 Several events are fired, onto which handlers can be attached. Encounter handlers can register themselves against the events, and are fired in registration order.
 
-If a handler is called, it has the option to return either `None` if it took no action, or a `str` message detailing what action was taken. If the processing indicates that no further processing should happen on the item it processed, it should raise a `DDStateControlException`, the bahviour for which is defined below
+If a handler is called, it has the option to return either `None` if it took no action, or a `str` message detailing what action was taken. If the processing indicates that no further processing should happen on the item it processed, it should raise a `ProcessorSkipException`, the bahviour for which is defined below
 
 * On entering folder `ON_ENTER_DIR`
-    * `DDStateControlException` - causes the processor to back out of the directory entirely
+    * `ProcessorSkipException` - causes the processor to back out of the directory entirely
 * On encountering directory `ON_ENCOUNTER_DIR`
-    * `DDStateControlException` - causes the processor to not call any more handlers on the directory
+    * `ProcessorSkipException` - causes the processor to not call any more handlers on the directory
 * On encountering file `ON_ENCOUNTER_FILE`
-    * `DDStateControlException` - causes the processor to not call any more handlers on the file
+    * `ProcessorSkipException` - causes the processor to not call any more handlers on the file
 
 ## Encounter handling
 
 To ensure the tree walk remains extendable, we specify separate Encounter handlers.
 
-The default handlers have the following effects:
+The default handlers have the following effects, in-order:
 
 * `SymLinkCheck`
-    * registered on `ON_ENCOUNTER_DIR`, `ON_ENCOUNTER_FILE`
-    * Ignore the file/directory
+    * registered on `ON_ENCOUNTER_DIR`
+    * If the directory is a symlink, raise `ProcessorSkipException`
     * The default implementation probably won't deal with symlinks properly
     * This can be configured to be turned off - at user's own peril!
 
-* `ProjectNameCheck`
-    * registered to `ON_ENTER_DIR`, which is the first event on descending into a directory
-    * if a configured named directory or file is found at top level, immediately raises a `DDStateControlException` to prevent tinkering with internals of a project directory - e.g. source control, PhotoShop, Kdenlive, etc
-
 * `IgnoreCheck`
     * registered on `ON_ENCOUNTER_FILE`, `ON_ENCOUNTER_DIR`, to check if a file or folder should be ignored
-    * if the file is in the ignore list, skip it
-    * if the file is a folder, do not descend into it
+    * if the file is in the ignore list, raise a `ProcessorSkipException`
+        * thus if the file is a folder, do not descend into it
+
+* `DirectoryContentCheck`
+    * registered to `ON_ENTER_DIR`, which is the first event on descending into a directory
+    * if a configured named directory or file is found at top level of target directory, immediately raises a `ProcessorSkipException` to prevent tinkering with internals of a project directory - e.g. source control, PhotoShop, Kdenlive, etc
 
 * `DeleteCheck`
     * registered on `ON_ENCOUNTER_FILE`, `ON_ENCOUNTER_DIR`, to check if a file or folder should be deleted
-    * if the file or folder is in the auto-delete list, remove it
+    * if the file or folder is in the auto-delete list, remove it, and raise a `ProcessorSkipException`
 
 * `Identify`
     * registered on `ON_ENCOUNTER_FILE`, causing a file to be identified and added to the database
@@ -68,8 +68,6 @@ The default handlers have the following effects:
 # Resolution handling
 
 To ensure the resolution methods remain extendable, we create separate resolution modules. It should be possible to later add new resolution methods as desired.
-
-A `GenericResolver.DDResolver` class provides some utility implementation; the further details are otherwise left to the resolvers. The other reason to use classes was simply to enable testability...
 
 ## Resolver modules
 
@@ -112,6 +110,8 @@ The following are the intended default modules.
 A YAML configuration file is specified such. It can be explicitly passed to the program at run time, or implicitly loaded from `dedupe.yaml` in the current working directory, or from a `$HOME/.local/config/dedupe/dedupe.config`, generated during install.
 
 Handlers are declared in the order in which they should be processed. The default settings should generally not be changed - re-ordering them may have unintended consequences.
+
+> WARNING - the following YAML may be incongruent with the current implementation. Please verify.
 
 ```yaml
 
