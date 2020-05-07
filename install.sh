@@ -11,7 +11,7 @@ cd "$(dirname "$0")"
 
 confirmuser() {
     read -p "Installing as $1 - proceed? y/N> "
-    if [[ "$REPLY" =~ ^(n|N|no|NO)$ ]]; then
+    if [[ ! "$REPLY" =~ ^(y|Y|yes|YES)$ ]]; then
         echo Abort
         exit 1
     fi
