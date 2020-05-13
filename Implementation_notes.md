@@ -52,6 +52,17 @@ The default handlers have the following effects, in-order:
     * if the file or folder is in the auto-delete list, remove it, and raise a `ProcessorSkipException`
 
 * `Identify`
+    * see `Identification Handling` below
+
+### Identification Handling
+
+There may be multiple ways of identifying a file or directory.
+
+An identified item should be registered as such in the database.
+
+The default identification simply processes the file for size and hashes. A file is identified as follows, using an encounter handler:
+
+* `Identify`
     * registered on `ON_ENCOUNTER_FILE`, causing a file to be identified and added to the database
     * if the file is a regular file, register info:
         * top-level specified folder
@@ -60,8 +71,10 @@ The default handlers have the following effects, in-order:
         * file size
             * if size already existed, check for small hash
             * if small hash matches, check for full hash
-            * if at any stage the entry is not matching, create a new entry with the current stats
+            * if at any stage the entry is not matching, create a new entry with the currently known metadata
     * if a duplicate is found, mark current file and duplicate files with bool
+
+Other identification modules should otherwise use the `Meta` table (see `Database`, further below).
 
 # Resolution handling
 
@@ -180,6 +193,10 @@ config:
 
 The following is the basic structure of database entries, allowing a decoupling of identities (uniqueness, determined ultimately by hash) and file paths, as well as parent directory paths.
 
+The `FileIdentity`, `FilePath` and `ParentPath` tables are considered "core" entry items for the purpose of processing duplicates.
+
+The `Meta` table is an additional structure allowing basic annotations on a path, for independent modules (handlers, etc) to reference. The module can register any path (whether for the FilePath or ParentPath table, as determined by `path_is_dir`), as well as a set of arbitrary data in `flags`, and a human-destined comment to associate with the entry.
+
 `PRI` denotes a primary key
 `EXT` denotes an external key
 `IDX` denotes that the column should be indexed, as we expect to search on it
@@ -201,6 +218,14 @@ The following is the basic structure of database entries, allowing a decoupling 
 * ParentPath
     * id : uint / PRI
     * path : blob
+
+* Meta
+    * id : uint / PRI
+    * path : unit / EXT
+    * path_is_dir : bool
+    * modulename : char(32)
+    * flags : char(32)
+    * comment : blob
 
 ### Repairing the database
 
