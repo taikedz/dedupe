@@ -4,8 +4,6 @@ import os
 import ddexceptions as DDE
 import ddpreferences as DDPREF
 
-__setup_done = False
-
 DCC_prefs = {
     "exclusion_names" : {
         "dir": [".git", ".svn"],
@@ -14,15 +12,7 @@ DCC_prefs = {
 }
 
 DDPREF.setDefaultPreferences("config/encounters", "DirectoryContentCheck", DCC_prefs)
-
-def __doSetup():
-    global __setup_done
-    global DCC_prefs
-
-    if __setup_done:
-        return
-
-    DCC_prefs = DDPREF.getPreference("DirectoryContentCheck")
+DCC_prefs = DDPREF.getPreference("config/encounters/DirectoryContentCheck")
 
 def __verify(target_item, exclusions, check_function):
     contents = target_item.getContents()
@@ -35,9 +25,6 @@ def __verify(target_item, exclusions, check_function):
 
 def process(target_item):
     global DCC_prefs
-
-    # We do not want this to be done prematurely, so here is best for now...
-    __doSetup()
 
     __verify(target_item, DCC_prefs["exclusion_names"]["dir"], os.path.isdir)
     __verify(target_item, DCC_prefs["exclusion_names"]["file"], os.path.isfile)

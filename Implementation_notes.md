@@ -177,6 +177,8 @@ config:
             fsdelete: True
             dbdelete: True
         autoskip: False # set to True to bypass prompts and always skip - thus generating a report
+        database:
+            type: "sqlite" # Select a supported database engine
     encounters:
         SymLinkCheck:
             follow: False

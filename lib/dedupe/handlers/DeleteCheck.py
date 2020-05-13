@@ -4,8 +4,6 @@ import os
 import ddexceptions as DDE
 import ddpreferences as DDPREF
 
-__setup_done = False
-
 # Deliberately empty sets
 # We should not be deleting anything by default, leave this to user's prefs
 DC_prefs = {
@@ -15,16 +13,8 @@ DC_prefs = {
     }
 }
 
-DDPREF.setDefaultPreferences("config/encounters", "IgnoreCheck", DC_prefs)
-
-def __doSetup():
-    global __setup_done
-    global DC_prefs
-
-    if __setup_done:
-        return
-
-    DC_prefs = DDPREF.getPreference("IgnoreCheck")
+DDPREF.setDefaultPreferences("config/encounters/IgnoreCheck", DC_prefs)
+DC_prefs = DDPREF.getPreference("config/encounters/IgnoreCheck")
 
 def __verify(target_item, patterns, checkfunction):
     item_name = target_item.getName()
@@ -33,8 +23,6 @@ def __verify(target_item, patterns, checkfunction):
             os.rm(target_item.getFullPath() )
 
 def process(target_item):
-    _doSetup()
-
     __verify(target_item, DC_prefs["dir"], os.path.isdir)
     __verify(target_item, DC_prefs["file"], os.path.isfile)
 
