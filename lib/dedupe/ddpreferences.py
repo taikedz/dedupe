@@ -1,3 +1,5 @@
+import yaml
+
 import ddexceptions as DDE
 
 """
@@ -9,15 +11,34 @@ __preferences_loaded = False
 
 __prefs_locked_message = "Preferences have already been loaded, and are now locked. Implementation error."
 
-def setDefaultPreferences(prefs_name, prefs_object):
-    """ Before loading preferences, specify the defaults
+def setDefaultPreferences(section_path, prefs_name, prefs_object):
+    """ After loading preferences file, specify the defaults
 
-    Raises ddexceptions.PreferencesLocked if called after loadPreferences()
+    Raises ddexceptions.PreferencesLocked if called before loadPreferences()
+
+    section_path - a "/"-delimited string, to the section into which to add the preference
+
+    prefs_name - the name of the preference
+
+    prefs_object - a dictionary representing the set of preferences
+
+    Example:
+
+        setDefaultPreferences("config/encounters", "SymLinkCheck", {"allow_symlinks": False})
     """
-    if __preferences_loaded:
+    if not __preferences_loaded:
         raise DDE.PreferencesLocked(__prefs_locked_message)
     
-    __preferences_data[prefs_name] = prefs_object
+    prefs_location = __preferences_data
+    for section in section_path.split("/"):
+        if section not in __preferences_data.keys():
+            __preferences_data[section] = {}
+        prefs_location = __preferences_data[section]
+
+    loaded_prefs = prefs_location[prefs_name]
+    prefs_location[prefs_name] = {**prefs_object, **loaded_prefs}
+    # NOTE - The loaded prefs take precedence over the defaults
+    # even though the file data was loaded prior
 
 def loadPreferences(prefs_file):
     """ Load a preferences file.
@@ -30,12 +51,9 @@ def loadPreferences(prefs_file):
     if __preferences_loaded:
         raise DDE.PreferencesLocked(__prefs_locked_message)
     __preferences_loaded = True
-    
-    raise DDE.NotImplemented("loadPreferences() not implemented in ddpreferences.py")
-    # implementation note - must implement prefs merging.
-    # load existing prefs onto the default prefs
-    # anything not specified in file still provided by prefs
-    # and then can allow multiple loadPreferences() calls
+
+    with open(prefs_file_name, 'r') as prefs_file_fh:
+        __preferences_data = yaml.load(prefs_file_fh)
 
 def getPreference(pref_name):
     return __preferences_data[pref_name]

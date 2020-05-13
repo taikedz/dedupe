@@ -33,8 +33,8 @@ To ensure the tree walk remains extendable, we specify separate Encounter handle
 The default handlers have the following effects, in-order:
 
 * `SymLinkCheck`
-    * registered on `ON_ENCOUNTER_DIR`
-    * If the directory is a symlink, raise `ProcessorSkipException`
+    * registered on `ON_ENCOUNTER_DIR`, `ON_ENCOUNTER_FILE`
+    * If the item is a symlink, raise `ProcessorSkipException`
     * The default implementation probably won't deal with symlinks properly
     * This can be configured to be turned off - at user's own peril!
 
@@ -140,8 +140,9 @@ version: "0.1"
 handlers:
     encounters:
         ON_ENTER_DIR:
-            - RepoCheck
+            - DirContentCheck
         ON_ENCOUNTER_FILE:
+            - SymLinkCheck
             - IgnoreCheck
             - DeleteCheck
             - Identify
@@ -149,7 +150,6 @@ handlers:
             - SymLinkCheck
             - IgnoreCheck
             - DeleteCheck
-            - Descend
     resolutions: # user will be reminded that they will select the copy to keep
         - handler: DeleteFile
           prompt: "Remove duplicates"
