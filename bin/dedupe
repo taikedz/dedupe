@@ -18,4 +18,6 @@ if [[ -z "$PYBIN" ]]; then
     exit 1
 fi
 
+export PYTHONPATH="${PYTHONPATH:$HOME/.local/lib/dedupe/handlers:$HOME/Dedupe/handlers}"
+
 exec "$PYBIN" "$DDLIBPATH/dedupe/dedupe.py" "$@"

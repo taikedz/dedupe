@@ -40,6 +40,9 @@ handlers:
 config:
   engine:
 
+    log:
+      level: "INFO"
+
     debug:
       fsdelete: True
       dbdelete: True
@@ -81,3 +84,4 @@ config:
       - "Makefile" # Programming project
       - "docker-compose.y*ml" # Infrastructure file
       - "pip-selfcheck.json" # Python virtual environment
+      - "*.vbox"

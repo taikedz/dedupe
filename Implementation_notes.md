@@ -54,6 +54,12 @@ The default handlers have the following effects, in-order:
 * `Identify`
     * see `Identification Handling` below
 
+Other types of encounter processors can be defined and loaded from a user's `~/.local/lib/dedupe/handlers/` or `~/Dedupe/handlers/` directory, for added customization.
+
+- for example `TrashCheck` could replace `DeleteCheck` by placing the files in the `~/.local/share/Trash`, e.g. the desktop trashcan
+- another one could be a "cleanup" handler, moving say all `Screenshot*` files to `~/Pictures/Screenshots/`
+- anything a user could want, really
+
 ### Identification Handling
 
 There may be multiple ways of identifying a file or directory.
