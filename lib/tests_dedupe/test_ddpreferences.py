@@ -5,7 +5,7 @@ import ddlog
 
 import testutils
 
-ddlog.setLevel("DEBUG")
+#ddlog.setLevel("DEBUG")
 
 class PreferencesCheck(unittest.TestCase):
     
