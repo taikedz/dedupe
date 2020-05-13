@@ -5,7 +5,7 @@ set -euo pipefail
 cd "$(dirname "$0")"
 
 if [[ -z "$*" ]]; then
-    echo -e "$(basename "$0") [FILE | --list | --all | --testfiles]\n\nSpecify a test file to run,\n  or '--list' to list available test files,\n  or '--all' to seek for and test all source files,\n  or '--testfiles' to run all existing test files."
+    echo -e "$(basename "$0") [FILE | --list | --all | --detect-missing | --testfiles]\n\nSpecify a test file to run,\n  or '--list' to list available test files,\n  or '--all' to seek for and test all source files,\n  or '--testfiles' to run all existing test files."
 
 elif [[ "$*" = "--list" ]]; then
     find . -name "test_*.py"
@@ -15,7 +15,8 @@ elif [[ "$*" = "--testfiles" ]]; then
         echo -e "\033[32;1m${testfile}\033[0m"
         bash runtests.sh "$testfile" || :
     done
-elif [[ "$*" = "--all" ]]; then
+
+elif [[ "$*" = "--all" ]] || [[ "$*" = "--detect-missing" ]]; then
     cd ../dedupe
     while read target_name; do
         [[ "$target_name" != "__init__.py" ]] || continue
@@ -25,7 +26,7 @@ elif [[ "$*" = "--all" ]]; then
         test_file="../tests_dedupe/$dir_name/test_$base_name"
 
         if [[ -f "$test_file" ]]; then
-            bash ../tests_dedupe/runtests.sh "$test_file" || :
+            ([[ "$*" = "--all" ]] && bash ../tests_dedupe/runtests.sh "$test_file") || :
         else
             echo -e "\033[31;1mNo corresponding test file \033[33;1m<$test_file>\033[0m"
         fi

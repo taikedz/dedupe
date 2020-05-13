@@ -1,11 +1,9 @@
 import unittest
-import logging
+import ddlog
 
 import testutils as TU
 
 import DirWalker
-
-#logging.basicConfig(level=logging.DEBUG)
 
 file_list = []
 dir_list = []

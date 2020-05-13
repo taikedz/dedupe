@@ -19,8 +19,10 @@ DC_prefs = DDPREF.getPreference("config/encounters/IgnoreCheck")
 def __verify(target_item, patterns, checkfunction):
     item_name = target_item.getName()
     for pat in patterns:
-        if fnmatch.fnmatch(item_name, pat) and checkfunction(target_item.getFullPath() ):
-            os.rm(target_item.getFullPath() )
+        full_path = target_item.getFullPath() 
+        if fnmatch.fnmatch(item_name, pat) and checkfunction(full_path):
+            os.rm(full_path )
+            raise DDE.ProcessorSkipException("DeleteCheck: <%s> removed <%s>" % (pat, full_path))
 
 def process(target_item):
     __verify(target_item, DC_prefs["dir"], os.path.isdir)

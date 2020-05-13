@@ -1,6 +1,8 @@
 import os
 import shutil
 
+import WalkerItem
+
 ######
 # Test result store
 # For use in global access
@@ -19,6 +21,15 @@ def retrieve(name):
 base_path = "/tmp/test-dedupe"
 
 def touch(path, data=None, symlink_source=None):
+    """
+    path - the path to create ; last item is a file
+
+    data - data to write to the file
+
+    symlink_source - the original file to link to.
+        the last item in the path is a symlink to the original file.
+        data is ignored if supplied
+    """
     path = "%s/%s" % (base_path, path)
     os.makedirs(os.path.dirname(path), exist_ok=True)
 
@@ -31,12 +42,17 @@ def touch(path, data=None, symlink_source=None):
             fh.write(data)
         fh.close()
 
+    return path
+
 def getPath(path=None):
     if path == None:
         path = ""
     path = "%s/%s" % (base_path, path)
     path = os.path.abspath(path)
     return path
+
+def getWalkerItemFrom(path=None):
+    return WalkerItem.WalkerItem(getPath(path), getPath(""))
 
 def removeTmp():
     shutil.rmtree(base_path)

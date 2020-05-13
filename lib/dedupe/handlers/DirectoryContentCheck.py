@@ -11,7 +11,7 @@ DCC_prefs = {
     }
 }
 
-DDPREF.setDefaultPreferences("config/encounters", "DirectoryContentCheck", DCC_prefs)
+DDPREF.setDefaultPreferences("config/encounters/DirectoryContentCheck", DCC_prefs)
 DCC_prefs = DDPREF.getPreference("config/encounters/DirectoryContentCheck")
 
 def __verify(target_item, exclusions, check_function):
@@ -21,7 +21,7 @@ def __verify(target_item, exclusions, check_function):
         matched_items = fnmatch.filter(contents, pat)
         for item in matched_items:
             if check_function("%s%s%s" % (target_item.getFullPath(), os.path.sep, item)):
-                raise ProcessorSkipException("<%s> found prevents directory <%s> from being processed." %(base_name, os.path.dirname(item) ) )
+                raise DDE.ProcessorSkipException("DirectoryContentCheck: <%s> found prevents directory <%s> from being processed." %(base_name, os.path.dirname(item) ) )
 
 def process(target_item):
     global DCC_prefs

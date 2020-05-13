@@ -11,7 +11,7 @@ IC_prefs = {
     }
 }
 
-DDPREF.setDefaultPreferences("config/encounters", "IgnoreCheck", IC_prefs)
+DDPREF.setDefaultPreferences("config/encounters/IgnoreCheck", IC_prefs)
 IC_prefs = DDPREF.getPreference("config/encounters/IgnoreCheck")
 
 def __verify(target_item, patterns, checkfunction):

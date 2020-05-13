@@ -1,5 +1,5 @@
-import logging
-log = logging.getLogger("dedupe")
+import ddlog
+log = ddlog.getLogger("dedupe")
 
 
 EVT_ENTER_DIR = "EVT_ENTER_DIR"
