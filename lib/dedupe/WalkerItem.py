@@ -54,6 +54,11 @@ class WalkerItem:
         """
         return os.path.isdir(self.path)
 
+    def isfile(self):
+        """ Returns True if the item is a file
+        """
+        return os.path.isfile(self.path)
+
     def islink(self):
         """ Returns True if the item is a symlink
         """
