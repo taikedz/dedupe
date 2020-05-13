@@ -1,6 +1,7 @@
 import yaml
 import copy
 
+import ddlog
 import ddexceptions as DDE
 
 """
@@ -9,8 +10,7 @@ Preferences loader - supply a file in YAML format to extract it
 
 __preferences_data = {}
 __preferences_loaded = False
-
-__prefs_locked_message = "Preferences have already been loaded, and are now locked. Implementation error."
+log = ddlog.getLogger("dedupe")
 
 def setDefaultPreferences(preferences_path, prefs_object):
     """ After loading preferences file, specify the defaults
@@ -26,20 +26,33 @@ def setDefaultPreferences(preferences_path, prefs_object):
         setDefaultPreferences("config/encounters/SymLinkCheck", {"allow_symlinks": False})
     """
     if not __preferences_loaded:
-        raise DDE.PreferencesLocked(__prefs_locked_message)
+        raise DDE.PreferencesLocked("Preferences file must be loaded first. Implementation error.")
     
     prefs_location = __preferences_data
-    for section in preferences_path.split("/"):
-        if section not in __preferences_data.keys():
-            __preferences_data[section] = {}
-        prefs_location = __preferences_data[section]
+    preferences_sections = preferences_path.split("/")
+    prefs_name = preferences_sections.pop() # Save the last name for in-place dereferencing
 
-    loaded_prefs = prefs_location
+    log.debug("prefs_name = %s"%prefs_name)
+
+    for section in preferences_sections:
+        if section not in prefs_location.keys():
+            log.debug("Create pref %s"%section)
+            prefs_location[section] = {}
+        prefs_location = prefs_location[section]
+
+    if prefs_name not in prefs_location.keys():
+        loaded_prefs = {}
+    else:
+        loaded_prefs = prefs_location[prefs_name]
+
     prefs_location[prefs_name] = {**prefs_object, **loaded_prefs}
+
+    log.debug("Default preferences added. Global preferences object is now:")
+    log.debug(str(__preferences_data))
     # NOTE - The loaded prefs take precedence over the defaults
     # even though the file data was loaded prior
 
-def loadPreferences(prefs_file):
+def loadPreferences(prefs_file_path):
     """ Load a preferences file.
 
     This function MUST be called after any modules call setDefaultPreferences()
@@ -47,11 +60,16 @@ def loadPreferences(prefs_file):
     Raises ddexceptions.PreferencesLocked if called more than once.
     """
     global __preferences_loaded
+    global __preferences_data
+
     if __preferences_loaded:
-        raise DDE.PreferencesLocked(__prefs_locked_message)
+        raise DDE.PreferencesLocked("File preferences have already been loaded, and are now locked. Implementation error.")
     __preferences_loaded = True
 
-    with open(prefs_file_name, 'r') as prefs_file_fh:
+    if prefs_file_path == None:
+        return
+
+    with open(prefs_file_path, 'r') as prefs_file_fh:
         __preferences_data = yaml.load(prefs_file_fh)
 
 def getPreference(preferences_path):
@@ -65,8 +83,9 @@ def getPreference(preferences_path):
     """
     prefs_location = __preferences_data
     for section in preferences_path.split("/"):
-        if section not in __preferences_data.keys():
-            __preferences_data[section] = {}
-        prefs_location = __preferences_data[section]
+        if section not in prefs_location.keys():
+            raise DDE.PreferenceUnkown(preferences_path)
+        else:
+            prefs_location = prefs_location[section]
 
     return copy.deepcopy(prefs_location)

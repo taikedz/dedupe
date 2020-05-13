@@ -7,6 +7,7 @@ DD_ERR_NOTIMPLEMENTED = 255
 DD_ERR_OPTIONS = 10
 
 DD_ERR_PREFSLOADED = 11
+DD_ERR_PREFUNKNOWN = 12
 
 DD_ERR_WALKER = 50
 DD_ERR_WALKERCONFIG = 51
@@ -43,6 +44,10 @@ class ProcessorSkipException(Exception):
 class PreferencesLocked(DDError):
     def __init__(self, message):
         DDError.__init__(self, message, exitcode=DD_ERR_PREFSLOADED)
+
+class PreferenceUnknown(DDError):
+    def __init__(self, message):
+        DDError.__init__(self, message, exitcode=DD_ERR_PREFUNKNOWN)
 
 ## --------
 
