@@ -1,0 +1,83 @@
+# Example
+
+software: "dedupe"
+version: "0.1"
+
+handlers:
+  encounters:
+  # The encounter handlers are defined in a config file
+  # If removed from the config, they do not get called
+
+    ON_ENTER_DIR:
+      - DirContentCheck
+
+    ON_ENCOUNTER_FILE:
+      # The order here is relevant; Identify must come after items that prevent
+      # processing of files, others can be re-arranged
+      - SymLinkCheck
+      - IgnoreCheck
+      - DeleteCheck
+      - Identify
+
+    ON_ENCOUNTER_DIR:
+      - SymLinkCheck
+      - IgnoreCheck
+      - DeleteCheck
+
+  resolutions: # user will be reminded that they will select the copy to keep
+    - handler: DeleteFile
+      prompt: "Remove duplicates"
+    - handler: DeleteDir
+      prompt: "Delete parent directories"
+    - handler: Merge
+      prompt: "Merge parent directories"
+    - handler: Skip
+      prompt: "No action"
+     # Note that "Skip" is a resolution in its own right
+     # Do not remove from here unless you want to prevent
+     # skipping at all
+
+config:
+  engine:
+
+    debug:
+      fsdelete: True
+      dbdelete: True
+
+    autoskip: False # set to True to bypass prompts and always skip - thus generating a report
+
+    database:
+      type: "sqlite" # Select a supported database engine
+
+  encounters:
+  # When an encounter handler is loaded, it may specify its own defaults
+  # The preferences set here, if any, should override the defaults
+
+    SymLinkCheck:
+      allow_symlinks: False
+
+    IgnoreCheck:
+      dir:
+      - "__pycache__"
+      - ".steam" # Do not try to process a Steam directory!
+      - ".config"
+      file:
+      - "*.pyc"
+      - "*.so"
+
+    DeleteCheck:
+      dir:
+      file:
+      - "Thumbs.db" # Comment out on Windows
+      - ".DS_Store" # Comment out on macOS
+
+    DirContentCheck: # Simple project folder detection by presence of a dir/file, extenable via config
+      dir:
+      - ".git"
+      - ".svn"
+      file:
+      - "*.kdenlive" # Kdenlive projects
+      - "*.aup" # Audacity projects
+      - "Makefile" # Programming project
+      - "docker-compose.y*ml" # Infrastructure file
+      - "pip-selfcheck.json" # Python virtual environment

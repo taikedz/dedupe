@@ -143,53 +143,9 @@ Handlers are declared in the order in which they should be processed. The defaul
     <map> (handler type): an optional entry for each type of handler
         <map> (handler name): each handler can have an entry, with a map of configurations
             <value> (config name): (config value)
-
----
-# Example
-
-software: "dedupe"
-version: "0.1"
-
-handlers:
-    encounters:
-        ON_ENTER_DIR:
-            - DirContentCheck
-        ON_ENCOUNTER_FILE:
-            - SymLinkCheck
-            - IgnoreCheck
-            - DeleteCheck
-            - Identify
-        ON_ENCOUNTER_DIR:
-            - SymLinkCheck
-            - IgnoreCheck
-            - DeleteCheck
-    resolutions: # user will be reminded that they will select the copy to keep
-        - handler: DeleteFile
-          prompt: "Remove duplicates"
-        - handler: DeleteDir
-          prompt: "Delete parent directories"
-        - handler: Merge
-          prompt: "Merge parent directories"
-
-config:
-    engine:
-        debug:
-            fsdelete: True
-            dbdelete: True
-        autoskip: False # set to True to bypass prompts and always skip - thus generating a report
-        database:
-            type: "sqlite" # Select a supported database engine
-    encounters:
-        SymLinkCheck:
-            follow: False
-        ProjectNameCheck: # Simple project folder detection by presence of a dir/file, extenable via config
-            dirs:
-            - ".git"
-            - ".svn"
-            files:
-            - "*.kdenlive" # Kdenlive projects
-            - "*.aup" # Audacity projects
 ```
+
+See [`example_config.yaml`](example_config.yaml) for a working example.
 
 # Database
 
