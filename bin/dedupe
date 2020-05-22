@@ -18,6 +18,8 @@ if [[ -z "$PYBIN" ]]; then
     exit 1
 fi
 
-export PYTHONPATH="${PYTHONPATH:$HOME/.local/lib/dedupe/handlers:$HOME/Dedupe/handlers}"
+# Because our default handler package is called "handlers",
+#  we need to name the custom one differently, hence "myhandlers"
+export PYTHONPATH="${PYTHONPATH}:$HOME/Dedupe/myhandlers"
 
 exec "$PYBIN" "$DDLIBPATH/dedupe/dedupe.py" "$@"

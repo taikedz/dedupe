@@ -8,18 +8,19 @@ handlers:
   # The encounter handlers are defined in a config file
   # If removed from the config, they do not get called
 
-    ON_ENTER_DIR:
+    EVT_ENTER_DIR:
       - DirContentCheck
 
-    ON_ENCOUNTER_FILE:
+    EVT_ENCOUNTER_FILE:
       # The order here is relevant; Identify must come after items that prevent
       # processing of files, others can be re-arranged
       - SymLinkCheck
       - IgnoreCheck
+#      - myhandlers.MoveCheck # Example of a custom handler in ~/Dedupe/myhandlers
       - DeleteCheck
       - Identify
 
-    ON_ENCOUNTER_DIR:
+    EVT_ENCOUNTER_DIR:
       - SymLinkCheck
       - IgnoreCheck
       - DeleteCheck

@@ -6,7 +6,7 @@ EVT_ENTER_DIR = "EVT_ENTER_DIR"
 EVT_ENCOUNTER_DIR = "EVT_ENCOUNTER_DIR"
 EVT_ENCOUNTER_FILE = "EVT_ENCOUNTER_FILE"
 
-all_handlers = {
+__all_handlers = {
     EVT_ENTER_DIR: [],
     EVT_ENCOUNTER_DIR: [],
     EVT_ENCOUNTER_FILE: [],
@@ -25,9 +25,16 @@ class WalkEventHandler:
         log.debug("Called %s on <%s>" % (self.handler_name, target_item))
         self.function_definition(target_item)
 
-def registerWalkEventHandler(event_name, handler_name, function_definition):
+def registerWalkEventHandler(event_name, handler_name, function_definition=None):
     log.debug("Registering %s on %s" %(handler_name, event_name))
-    all_handlers[event_name].append( WalkEventHandler(handler_name, function_definition) )
+    if function_definition == None:
+        if handler_name.find(".") < 0 :
+            handler_name = "handlers."+handler_name
+
+        handler = importlib.import_module(handler_name)
+        function_definition = handler.process
+
+    __all_handlers[event_name].append( WalkEventHandler(handler_name, function_definition) )
 
 def getHandlers():
-    return all_handlers
+    return __all_handlers

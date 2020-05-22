@@ -7,6 +7,7 @@ import ddlog
 
 import ddexceptions as DDE
 import WalkerItem
+import Handlers
 
 log = ddlog.getLogger("dedupe")
 
@@ -15,7 +16,7 @@ class DirWalker:
     def __init__(self, top_dir, handlers):
         """
         top_dir - str: the path of the topmost directory
-        handlers - dict(str: Event --> DDHandler: handler instance)
+        handlers - dict(str: Event --> DDHandler: list of handlers)
         """
         self.top_dir = top_dir
         self.handlers = handlers
@@ -28,9 +29,9 @@ class DirWalker:
         """ An iterative walker, for triggering relevant events appropriately.
 
         The walker will trigger the following events, causing their handlers to be run:
-        - DirWalker.EVT_ENTER_DIR - when entering a directory, before adding its contents to the walk stack for processing
-        - DirWalker.EVT_ENCOUNTER_DIR - when a directory is found, before processing it
-        - DirWalker.EVT_ENCOUNTER_FILE - when a file is found, before processing it
+        - EVT_ENTER_DIR - when entering a directory, before adding its contents to the walk stack for processing
+        - EVT_ENCOUNTER_DIR - when a directory is found, before processing it
+        - EVT_ENCOUNTER_FILE - when a file is found, before processing it
         """
         if not self.walking:
             self.walking = True
@@ -43,11 +44,11 @@ class DirWalker:
 
             try:
                 if current_item.isdir():
-                    self.__processEvent("EVT_ENCOUNTER_DIR", current_item)
+                    self.__processEvent(Handlers.EVT_ENCOUNTER_DIR, current_item)
 
                     # If we get past the encounter, we *intend* to enter at this point
                     #  trigger this event before placing things on the file stack
-                    self.__processEvent("EVT_ENTER_DIR", current_item)
+                    self.__processEvent(Handlers.EVT_ENTER_DIR, current_item)
 
                     # "Effectively" enter
                     log.debug("Entering <%s>." %(current_item.getName()) )
@@ -59,7 +60,7 @@ class DirWalker:
                     self.file_stack[0:0] = ["%s%s%s" % (current_item.getFullPath(), os.path.sep, child_path) for child_path in dir_contents]
                     log.debug("File stack now has %i items to process." % (len(self.file_stack)))
                 else:
-                    self.__processEvent("EVT_ENCOUNTER_FILE", current_item)
+                    self.__processEvent(Handlers.EVT_ENCOUNTER_FILE, current_item)
 
             except DDE.ProcessorSkipException as e:
                 log.info(str(e))
