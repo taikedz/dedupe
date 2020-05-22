@@ -162,7 +162,7 @@ The `FileIdentity`, `FilePath` and `ParentPath` tables are considered "core" ent
 The `Meta` table is an additional structure allowing basic annotations on a path, for independent modules (handlers, etc) to reference. The module can register any path (whether for the FilePath or ParentPath table, as determined by `path_is_dir`), as well as a set of arbitrary data in `flags`, and a human-destined comment to associate with the entry.
 
 `PRI` denotes a primary key
-`EXT` denotes an external key
+`EXT : <table>` denotes an external key, and which table it references
 `IDX` denotes that the column should be indexed, as we expect to search on it
 
 * FileIdentity
@@ -173,20 +173,20 @@ The `Meta` table is an additional structure allowing basic annotations on a path
 
 * FilePath
     * id : uint / PRI
-    * path : blob / IDX?
-    * top_path : uint / EXT
-    * parent_path : uint / EXT
-    * identity : uint / EXT
+    * path : uint / EXT : GenericPath
+    * top_path : uint / EXT : GenericPath
+    * parent_path : uint / EXT : GenericPath
+    * identity : uint / EXT : FileIdentity
     * duplicate : bool
 
-* ParentPath
+* GenericPath
     * id : uint / PRI
+    * isdir : bool
     * path : blob
 
 * Meta
     * id : uint / PRI
-    * path : unit / EXT
-    * path_is_dir : bool
+    * path : unit / EXT : GenericPath
     * modulename : char(32)
     * flags : char(32)
     * comment : blob
