@@ -6,7 +6,19 @@ hasbin() {
     which "$1" &>/dev/null
 }
 
-for pybin in python3 python34 python35 python36 python37 python38 python; do
+valid_pythons=(
+    # Most recent, most specific, first
+    python38
+    python3.8
+    python37
+    python3.7
+    python36
+    python3.6
+    python3
+    python
+)
+
+for pybin in "${valid_pythons[@]}"; do
     if hasbin "$pybin" ; then
         PYBIN="$pybin"
         break
