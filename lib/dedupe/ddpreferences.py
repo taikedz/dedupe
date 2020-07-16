@@ -84,7 +84,7 @@ def getPreference(preferences_path):
     prefs_location = __preferences_data
     for section in preferences_path.split("/"):
         if section not in prefs_location.keys():
-            raise DDE.PreferenceUnkown(preferences_path)
+            raise DDE.PreferenceUnknown(preferences_path)
         else:
             prefs_location = prefs_location[section]
 

@@ -13,13 +13,11 @@ log = ddlog.getLogger("dedupe")
 
 class DirWalker:
 
-    def __init__(self, top_dir, handlers):
+    def __init__(self, top_dir):
         """
         top_dir - str: the path of the topmost directory
-        handlers - dict(str: Event --> DDHandler: list of handlers)
         """
         self.top_dir = top_dir
-        self.handlers = handlers
         self.file_stack = [top_dir]
         self.walking = False
 
@@ -44,11 +42,11 @@ class DirWalker:
 
             try:
                 if current_item.isdir():
-                    self.__processEvent(Handlers.EVT_ENCOUNTER_DIR, current_item)
+                    Handlers.processEvent(Handlers.EVT_ENCOUNTER_DIR, current_item)
 
                     # If we get past the encounter, we *intend* to enter at this point
                     #  trigger this event before placing things on the file stack
-                    self.__processEvent(Handlers.EVT_ENTER_DIR, current_item)
+                    Handlers.processEvent(Handlers.EVT_ENTER_DIR, current_item)
 
                     # "Effectively" enter
                     log.debug("Entering <%s>." %(current_item.getName()) )
@@ -60,20 +58,11 @@ class DirWalker:
                     self.file_stack[0:0] = ["%s%s%s" % (current_item.getFullPath(), os.path.sep, child_path) for child_path in dir_contents]
                     log.debug("File stack now has %i items to process." % (len(self.file_stack)))
                 else:
-                    self.__processEvent(Handlers.EVT_ENCOUNTER_FILE, current_item)
+                    Handlers.processEvent(Handlers.EVT_ENCOUNTER_FILE, current_item)
 
             except DDE.ProcessorSkipException as e:
                 log.info(str(e))
                 pass
-
-    def __processEvent(self, event_name, current_item):
-        """ Runs the handlers associated with the named event. If the handler returns a message, logs the message.
-        """
-        log.debug("Event [%s] :: %s" % (event_name, current_item.getName()) )
-        for handler in self.handlers[event_name]:
-            result = handler.process(current_item)
-            if result != None:
-                log.info(str(result) )
 
     def __pop(self):
         """ Returns a WalkerItem of the topmost item on the file stack. Removes that item from the stack.

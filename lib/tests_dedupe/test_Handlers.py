@@ -3,6 +3,7 @@ import unittest
 import testutils as TU
 
 import Handlers
+from WalkerItem import WalkerItem
 
 class TestHandlerRegistration(unittest.TestCase):
 
@@ -14,21 +15,18 @@ class TestHandlerRegistration(unittest.TestCase):
         Handlers.registerWalkEventHandler(Handlers.EVT_ENCOUNTER_FILE, "processing_stub", processing_stub)
         Handlers.registerWalkEventHandler(Handlers.EVT_ENCOUNTER_DIR, "processing_stub", processing_stub)
 
-        all_handlers = Handlers.getHandlers()
+        Handlers.processEvent(Handlers.EVT_ENCOUNTER_FILE, TU.getWalkerItemFrom("the_file") )
+        self.assertEqual(TU.retrieve("stub"), TU.getPath("the_file"))
 
-        enc_file_handler = all_handlers[Handlers.EVT_ENCOUNTER_FILE][0]
-        enc_file_handler.process("the_file")
+        Handlers.processEvent(Handlers.EVT_ENCOUNTER_DIR, TU.getWalkerItemFrom("the_dir") )
+        self.assertEqual(TU.retrieve("stub"), TU.getPath("the_dir"))
 
-        self.assertEqual(TU.retrieve("stub"), "the_file")
+    def setUp(self):
+        TU.touch("the_file", "data")
+        TU.touch("the_dir/dummy", "data")
 
-        enc_dir_handler = all_handlers[Handlers.EVT_ENCOUNTER_DIR][0]
-        enc_dir_handler.process("the_dir")
-
-        self.assertEqual(TU.retrieve("stub"), "the_dir")
-
-        self.assertEqual(len(all_handlers[Handlers.EVT_ENTER_DIR]) , 0 )
-        self.assertEqual(len(all_handlers[Handlers.EVT_ENCOUNTER_DIR]) , 1 )
-        self.assertEqual(len(all_handlers[Handlers.EVT_ENCOUNTER_FILE]) , 1 )
+    def tearDown(self):
+        TU.removeTmp()
 
 if __name__ == '__main__':
     unittest.main()

@@ -4,6 +4,7 @@ import ddlog
 import testutils as TU
 
 import DirWalker
+import Handlers
 
 file_list = []
 dir_list = []
@@ -13,14 +14,8 @@ class Appender:
     def __init__(self, listref):
         self.target_list = listref
 
-    def process(self, item):
+    def __call__(self, item):
         self.target_list.append(str(item) )
-
-empty_handlers = {
-    "EVT_ENTER_DIR" : [Appender(enter_list)],
-    "EVT_ENCOUNTER_DIR" : [Appender(dir_list)],
-    "EVT_ENCOUNTER_FILE" : [Appender(file_list)],
-}
 
 class TestDirWalker(unittest.TestCase):
     """ A blind test item to ensure DirWalker runs without
@@ -28,7 +23,7 @@ class TestDirWalker(unittest.TestCase):
     """
 
     def runTest(self):
-        dw = DirWalker.DirWalker(TU.getPath() , empty_handlers)
+        dw = DirWalker.DirWalker(TU.getPath())
         dw.walk()
 
         self.assertTrue( TU.getPath("firstdir/subdir/file1") in file_list )
@@ -44,6 +39,10 @@ class TestDirWalker(unittest.TestCase):
         TU.touch("seconddir/file4", "hello")
         TU.touch("seconddir/file5", "goodbye")
 
+        Handlers.registerWalkEventHandler(Handlers.EVT_ENTER_DIR, "register enter dir", Appender(enter_list) )
+        Handlers.registerWalkEventHandler(Handlers.EVT_ENCOUNTER_FILE, "register encounter file",  Appender(file_list) )
+        Handlers.registerWalkEventHandler(Handlers.EVT_ENCOUNTER_DIR, "register encounter dir", Appender(dir_list) )
+
     def tearDown(self):
         TU.removeTmp()
 
@@ -53,7 +52,7 @@ def runplain():
     TU.touch("firstdir/subdir/file3", "bye")
     TU.touch("seconddir/file4", "hello")
     TU.touch("seconddir/file5", "goodbye")
-    dw = DirWalker.DirWalker(TU.getPath() , empty_handlers)
+    dw = DirWalker.DirWalker(TU.getPath())
     dw.walk()
     TU.removeTmp()
 

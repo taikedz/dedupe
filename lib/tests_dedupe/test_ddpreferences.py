@@ -1,6 +1,7 @@
 import unittest
 
 import ddpreferences as DDPREF
+import ddexceptions as DDE
 import ddlog
 
 import testutils
@@ -25,7 +26,11 @@ level1:
         self.assertEqual(DDPREF.getPreference("level1/level2")["key2"], "value2" )
         self.assertEqual(DDPREF.getPreference("level1/level2")["key1"], "value1" )
 
-        DDPREF.setDefaultPreferences("prefs/not/from/file", {})
+        DDPREF.setDefaultPreferences("prefs/not/from/file", {"pref":"data"})
+        self.assertEqual(DDPREF.getPreference("prefs/not/from/file")["pref"], "data" )
+
+        with self.assertRaises(DDE.PreferenceUnknown) as cm:
+            DDPREF.getPreference("prefs/unknown")
 
     def tearDown(self):
         testutils.removeTmp()
