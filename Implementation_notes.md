@@ -4,7 +4,7 @@
 
 This program is implemented as a set of Python scripts written with Python 3 in mind
 
-The actual program is in `libs/dedupe` ; the corresponding tests are in `lib/test_dedupe`
+The actual program is in `lib/dedupe` ; the corresponding tests are in `lib/test_dedupe`
 
 The wrapper script in `bin/dedupe` serves two purposes:
 
@@ -12,6 +12,15 @@ The wrapper script in `bin/dedupe` serves two purposes:
 * the script tries to select the correct python command for cross-platform - on Ubuntu it is simply `python3` but in Fedora this could be `python37` or more generally `python`
 
 The install script places and enables the libs and command files accordingly.
+
+## Stages
+
+There are two distinct stages to DeDupe:
+
+* Tree Walk
+    * The deduplicator walks the directories supplied to it to identify as appropriate the files to check
+* Resolution
+    * The resolver checks the database for registered duplicates, and offers resolution strategies to the user interactively
 
 ## Tree walk
 
@@ -24,6 +33,8 @@ If a handler is called, it has the option to return either `None` if it took no 
 * On encountering directory `ON_ENCOUNTER_DIR`
     * `ProcessorSkipException` - causes the processor to not call any more handlers on the directory, due for example to its metadata (including its name)
 * On encountering file `ON_ENCOUNTER_FILE`
+    * `ProcessorSkipException` - causes the processor to not call any more handlers on the file
+* On attempting to identify the file `ON_IDENTIFY`
     * `ProcessorSkipException` - causes the processor to not call any more handlers on the file
 
 ## Encounter handling
@@ -51,9 +62,6 @@ The default handlers have the following effects, in-order:
     * registered on `ON_ENCOUNTER_FILE`, `ON_ENCOUNTER_DIR`, to check if a file or folder should be deleted
     * if the file or folder is in the auto-delete list, remove it, and raise a `ProcessorSkipException`
 
-* `Identify`
-    * see `Identification Handling` below
-
 Other types of encounter processors can be defined and loaded from a user's `~/.local/lib/dedupe/handlers/` or `~/Dedupe/handlers/` directory, for added customization.
 
 - for example `TrashCheck` could replace `DeleteCheck` by placing the files in the `~/.local/share/Trash`, e.g. the desktop trashcan
@@ -69,7 +77,7 @@ An identified item should be registered as such in the database.
 The default identification simply processes the file for size and hashes. A file is identified as follows, using an encounter handler:
 
 * `Identify`
-    * registered on `ON_ENCOUNTER_FILE`, causing a file to be identified and added to the database
+    * registered on `ON_IDENTIFY`, causing a file to be identified and added to the database
     * if the file is a regular file, register info:
         * top-level specified folder
         * parent path
@@ -80,7 +88,7 @@ The default identification simply processes the file for size and hashes. A file
             * if at any stage the entry is not matching, create a new entry with the currently known metadata
     * if a duplicate is found, mark current file and duplicate files with bool
 
-Other identification modules should otherwise use the `Meta` table (see `Database`, further below).
+Other identification modules might otherwise use the `Meta` table (see `Database`, further below).
 
 # Resolution handling
 

@@ -9,34 +9,37 @@ handlers:
   # If removed from the config, they do not get called
 
     EVT_ENTER_DIR:
-      - DirContentCheck
+    - DirContentCheck
 
     EVT_ENCOUNTER_FILE:
-      # The order here is relevant; Identify must come after items that prevent
-      # processing of files, others can be re-arranged
-      - SymLinkCheck
-      - IgnoreCheck
-#      - myhandlers.MoveCheck # Example of a custom handler in ~/Dedupe/myhandlers
-      - DeleteCheck
-      - Identify
+    # The order here is relevant
+    # Handlers are called in-order
+    - SymLinkCheck
+    - IgnoreCheck
+#    - myhandlers.MoveCheck # Example of a custom handler in ~/Dedupe/myhandlers
+    - DeleteCheck
+    - Identify
 
     EVT_ENCOUNTER_DIR:
-      - SymLinkCheck
-      - IgnoreCheck
-      - DeleteCheck
+    - SymLinkCheck
+    - IgnoreCheck
+    - DeleteCheck
+
+    EVT_IDENTIFY:
+    - Identify
 
   resolutions: # user will be reminded that they will select the copy to keep
-    - handler: DeleteFile
-      prompt: "Remove duplicates"
-    - handler: DeleteDir
-      prompt: "Delete parent directories"
-    - handler: Merge
-      prompt: "Merge parent directories"
-    - handler: Skip
-      prompt: "No action"
-     # Note that "Skip" is a resolution in its own right
-     # Do not remove from here unless you want to prevent
-     # skipping at all
+  - handler: DeleteFile
+    prompt: "Remove duplicates"
+  - handler: DeleteDir
+    prompt: "Delete parent directories"
+  - handler: Merge
+    prompt: "Merge parent directories"
+  - handler: Skip
+    prompt: "No action"
+   # Note that "Skip" is a resolution in its own right
+   # Do not remove from here unless you want to prevent
+   # skipping at all
 
 config:
   engine:

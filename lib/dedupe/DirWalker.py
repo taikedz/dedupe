@@ -58,7 +58,11 @@ class DirWalker:
                     self.file_stack[0:0] = ["%s%s%s" % (current_item.getFullPath(), os.path.sep, child_path) for child_path in dir_contents]
                     log.debug("File stack now has %i items to process." % (len(self.file_stack)))
                 else:
+                    # Non-identification checks
                     Handlers.processEvent(Handlers.EVT_ENCOUNTER_FILE, current_item)
+
+                    # Identification
+                    Handlers.processEvent(Handlers.EVT_IDENTIFY, current_item)
 
             except DDE.ProcessorSkipException as e:
                 log.info(str(e))

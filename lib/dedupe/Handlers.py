@@ -6,11 +6,13 @@ log = ddlog.getLogger("dedupe")
 EVT_ENTER_DIR = "EVT_ENTER_DIR"
 EVT_ENCOUNTER_DIR = "EVT_ENCOUNTER_DIR"
 EVT_ENCOUNTER_FILE = "EVT_ENCOUNTER_FILE"
+EVT_IDENTIFY = "EVT_IDENTIFY"
 
 __all_handlers = {
     EVT_ENTER_DIR: [],
     EVT_ENCOUNTER_DIR: [],
     EVT_ENCOUNTER_FILE: [],
+    EVT_IDENTIFY: [],
 }
 
 class WalkEventHandler:
