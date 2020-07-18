@@ -40,8 +40,7 @@ class TestDirContentCheck(unittest.TestCase):
         self.bounces(TU.getWalkerItemFrom("folder3/"))
 
     def bounces(self, path):
-        with self.assertRaises(DDE.ProcessorSkipException) as cm:
-            DCC.process(path)
+        TU.assertRaises(DDE.ProcessorSkipException, DCC.process, path)
 
 if __name__ == "__main__":
     unittest.main()

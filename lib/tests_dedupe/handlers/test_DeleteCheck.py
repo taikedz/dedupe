@@ -41,8 +41,7 @@ class TestDeleteCheck(unittest.TestCase):
     def runTest(self):
         for item in files_to_process:
             if item == ".DS_Store":
-                with self.assertRaises(DDE.ProcessorSkipException) as cm:
-                    DC.process(TU.getWalkerItemFrom(item) )
+                TU.assertRaises(self, DDE.ProcessorSkipException, DC.process, TU.getWalkerItemFrom(item))
             else:
                 DC.process(TU.getWalkerItemFrom(item) )
 

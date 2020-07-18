@@ -19,6 +19,7 @@ class TestSymLinkAvoidance(unittest.TestCase):
 
     def runTest(self):
         wi = testutils.getWalkerItemFrom("folder1/file1")
+        # FIXME -- wait WHAT are we testing??
         with self.assertRaises(AssertionError) as cm1: # No native assertNotRaises in unittest...
             with self.assertRaises(DDE.ProcessorSkipException) as cm2:
                 checker.process(wi)

@@ -1,5 +1,7 @@
 import os
 import shutil
+import functools
+import unittest
 
 import WalkerItem
 
@@ -57,3 +59,38 @@ def getWalkerItemFrom(path=None):
 def removeTmp():
     shutil.rmtree(base_path)
 
+def assertReport(rethrow):
+    """
+    When wrapped in variables, AssertionErrors just report what function call failed, not the content
+
+    use the decorator @TU.assertReport(True) to actually see the contents, around a function that gets called by self.assert*(...)
+
+    use @TU.assertReport(False) to not exit on error
+    """
+    def receive(functioncall):
+        @functools.wraps(functioncall)
+        def report_assertion_error(*args, **kwargs):
+            try:
+                functioncall(*args, **kwargs)
+            except AssertionError as e:
+                print("====")
+                for arg in args:
+                    print(arg)
+                print("----")
+                for kwarg in kwargs:
+                    print(kwarg)
+                print("====")
+
+                if rethrow:
+                    raise e
+                else:
+                    print(e)
+        return report_assertion_error
+    return receive
+
+def assertRaises(self, errortype, functioncall, *args, **kwargs):
+    """
+    TU.assertRaises(self, Exception, functotest, "arguments")
+    """
+    with self.assertRaises(errortype) as cm:
+        functioncall(*args, **kwargs)

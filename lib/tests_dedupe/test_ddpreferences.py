@@ -4,14 +4,14 @@ import ddpreferences as DDPREF
 import ddexceptions as DDE
 import ddlog
 
-import testutils
+import testutils as TU
 
 #ddlog.setLevel("DEBUG")
 
 class PreferencesCheck(unittest.TestCase):
     
     def setUp(self):
-        DDPREF.loadPreferences(testutils.touch("testfile.yaml", data="""
+        DDPREF.loadPreferences(TU.touch("testfile.yaml", data="""
 level1:
     level2:
         key1: "value1"
@@ -29,11 +29,10 @@ level1:
         DDPREF.setDefaultPreferences("prefs/not/from/file", {"pref":"data"})
         self.assertEqual(DDPREF.getPreference("prefs/not/from/file")["pref"], "data" )
 
-        with self.assertRaises(DDE.PreferenceUnknown) as cm:
-            DDPREF.getPreference("prefs/unknown")
+        TU.assertRaises(self, DDE.PreferenceUnknown, DDPREF.getPreference, "prefs/unknown")
 
     def tearDown(self):
-        testutils.removeTmp()
+        TU.removeTmp()
 
 if __name__ == "__main__":
     unittest.main()

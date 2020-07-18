@@ -46,8 +46,7 @@ class TestDeleteCheck(unittest.TestCase):
             log.debug("> "+item)
             if item == "__pycache__" or item[-4:] == ".pyc":
                 # Exception here is OK ...
-                with self.assertRaises(DDE.ProcessorSkipException) as cm:
-                    IC.process(TU.getWalkerItemFrom(item) )
+                TU.assertRaises(DDE.ProcessorSkipException, IC.process, TU.getWalkerItemFrom(item) )
             else:
                 # ... but here it is not
                 IC.process(TU.getWalkerItemFrom(item) )
