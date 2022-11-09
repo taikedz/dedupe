@@ -1,3 +1,20 @@
+#!/usr/bin/env puython3
+
+"""
+Directory Merge Tool
+
+Part of taikedz's dedupe suite
+
+---
+
+Tool for merging multiple directories' contents into a single target base directory.
+The paths inside the source directories are retained in their copy-overs to the
+ target directory.
+
+---
+(C) Tai Kedzierski, released under GPLv3
+"""
+
 import argparse
 import logging
 import os
@@ -70,12 +87,13 @@ def walk_and_merge(destination_dir, source_path):
             elif CLASH_RESOLVE:
                 clash_resolved_dest = get_clash_resolve_name(dest_file)
                 if clash_resolved_dest:
+                    LOG.debug(f"Clash-resolve: Moving {sub_file} -> {clash_resolved_dest}")
                     shutil.move(sub_file, clash_resolved_dest)
                 else:
-                    LOG.info(f"Skipped {sub_file}")
+                    LOG.info( f"Clash-resolve: Skipped {sub_file}")
 
             else:
-                message = f"{inner_path} already exists in destination. Use `--resolve RESOLUTION` to provide an action."
+                message = f"Clash-resolve: {inner_path} already exists in destination. Use `--resolve RESOLUTION` to provide an action."
                 LOG.error(message)
                 raise DDMWalkError(message)
 
