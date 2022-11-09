@@ -8,13 +8,15 @@ logging.basicConfig(level=logging.INFO)
 
 CLASH_RESOLVE = None
 
+class DDMWalkError(OSError): pass
+
 
 def main():
     LOG.info("Starting dedupe ...")
     args = parse_arguments()
 
     if not os.path.isdir(args.main_dir):
-        raise OSError(f"{args.main_dir} does not exist.")
+        raise DDMWalkError(f"{args.main_dir} does not exist.")
 
     for src_dir in args.source_dirs:
         walk_and_merge(args.main_dir, src_dir)
@@ -32,6 +34,8 @@ def parse_arguments(args=None):
 
     parsed_args = parser.parse_args(args)
 
+    CLASH_RESOLVE = parsed_args.resolve_clash
+
     return parsed_args
 
 
@@ -40,7 +44,7 @@ def get_clash_resolve_name(original_name):
         return None
 
     elif CLASH_RESOLVE == "force":
-        original_name
+        return original_name
 
     elif CLASH_RESOLVE == "rename":
         i = 0
@@ -57,7 +61,8 @@ def walk_and_merge(destination_dir, source_path):
     for nested_base, _nested_dirs, nested_files in os.walk(source_path):
         for nested_f in nested_files:
             sub_file  = os.path.join(nested_base, nested_f)
-            dest_file = os.path.join(destination_dir, sub_file)
+            inner_path = os.path.sep.join((sub_file.split(os.path.sep)[1:]))
+            dest_file = os.path.join(destination_dir, inner_path)
 
             if not os.path.exists(dest_file):
                 shutil.move(sub_file, dest_file)
@@ -70,9 +75,9 @@ def walk_and_merge(destination_dir, source_path):
                     LOG.info(f"Skipped {sub_file}")
 
             else:
-                message = f"{sub_file} already exists in destination. Use `--resolve RESOLUTION` to provide an action."
+                message = f"{inner_path} already exists in destination. Use `--resolve RESOLUTION` to provide an action."
                 LOG.error(message)
-                raise OSError(message)
+                raise DDMWalkError(message)
 
 
 # =====================
