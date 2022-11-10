@@ -95,7 +95,9 @@ if sys.platform not in SUPPORTED_OS_LIST:
 
 
 # Anywhere this package installed, use content from requirements.txt always ...
-reqtxt_list = uncomment_file("requirements.txt")
+reqtxt_list = []
+if os.path.exists("requirements.txt"):
+    reqtxt_list.extend(uncomment_file("requirements.txt"))
 
 
 # Add special support for some OSes - e.g. deployment environments, dev environments ...
@@ -105,9 +107,6 @@ for os_string in SUPPORTED_OS_LIST:
 
         if os.path.isfile(req_file):
             print("--- Selecting {} dependencies ---".format(os_string))
-
-            # ... but only install the OS-specific requirements on Linux/BSD systems
-            #  (packages that do not offer Windows support; unsure for MacOS so excluding)
             extras = uncomment_file(req_file)
             reqtxt_list.extend(extras)
 
