@@ -3,6 +3,9 @@
 *.pyc
 __pycache__/
 
+local_*
+*.local
+
 # Database-type files.
 *.db
 *.sqlite
