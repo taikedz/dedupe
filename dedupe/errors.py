@@ -1,0 +1,1 @@
+class DedupeError(Exception): pass
