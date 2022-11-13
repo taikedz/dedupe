@@ -6,9 +6,9 @@ from dedupe.db.api_generic import (
     DedupeDatabaseError
 )
 
-def connect_sqlite(dbpath) -> DbApi:
+def connect_sqlite(dbpath, short_hash_max_bytes) -> DbApi:
     from dedupe.db.api_sqlite import SQLiteApi
-    return SQLiteApi(dbpath)
+    return SQLiteApi(dbpath, short_hash_max_bytes=short_hash_max_bytes)
 
 
 
