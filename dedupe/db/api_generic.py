@@ -27,9 +27,9 @@ class DbApiGeneric:
 
     PATHS_TABLE = [
         FieldDef("path", "chars:256", True, True),
-        FieldDef("size", "int"),
-        FieldDef("short_hash", "chars:64"),
-        FieldDef("full_hash", "chars:64"),
+        FieldDef("size", "int", index=True),
+        FieldDef("short_hash", "chars:64", index=True),
+        FieldDef("full_hash", "chars:64", index=True),
     ]
 
     DUPLICATES_TABLE = [
@@ -82,6 +82,18 @@ class DbApiGeneric:
 
 
     def get_path_info(self, path) -> Dict:
+        raise NotImplementedError()
+
+
+    def register_duplicate(self, full_hash):
+        raise NotImplementedError()
+
+
+    def get_registered_duplicates(self) -> List[str]:
+        raise NotImplementedError()
+
+
+    def lookup(self, property, value) -> List[Dict]:
         raise NotImplementedError()
 
 
