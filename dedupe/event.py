@@ -24,7 +24,7 @@ def execute_handlers(event_name:str, data:Any) -> bool:
 
     If no handlers return True, execute_handlers returns False
     """
-    for handler in __EVENTS[event_name]:
+    for handler in __EVENTS.get(event_name, []):
         was_handled = bool(handler(data))
         if was_handled is True:
             return True
@@ -61,5 +61,7 @@ if __name__ == "__main__":
     assert not execute_handlers("test", "other")
     assert _handlers_executed == ["A", "B"]
     _reset_handler_count()
+
+    assert not execute_handlers("undefined", None)
 
     print("Basic tests passed")
