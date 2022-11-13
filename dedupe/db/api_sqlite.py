@@ -126,6 +126,15 @@ class SQLiteApi(DbApiGeneric):
         return entries[0]
 
 
+    def register_duplicate(self, full_hash):
+        query = f"INSERT INTO {self.DUPLICATES_TABLE_NAME}(full_hash) VALUES (?)"
+        self._query(query, (full_hash,))
+
+
+    def get_registered_duplicates(self) -> List[str]:
+        return [d[0] for d in self._query(f"SELECT full_hash FROM {self.DUPLICATES_TABLE_NAME}")]
+
+
     def lookup(self, property, value) -> List[Dict]:
         properties = ["path", "size","short_hash","full_hash"]
 

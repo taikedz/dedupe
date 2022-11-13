@@ -85,6 +85,14 @@ class DbApiGeneric:
         raise NotImplementedError()
 
 
+    def register_duplicate(self, full_hash):
+        raise NotImplementedError()
+
+
+    def get_registered_duplicates(self) -> List[str]:
+        raise NotImplementedError()
+
+
     def lookup(self, property, value) -> List[Dict]:
         raise NotImplementedError()
 

@@ -23,7 +23,7 @@ if __name__ == "__main__":
             except DedupeDatabaseError:
                 assert data is None, f"Should have got data for {path}, but got nothing"
 
-        api = connector_method(*connector_params)
+        api:DbApi = connector_method(*connector_params)
         api.add_path("/a", 128)
         api.add_path("/b", 128)
         _info_matches("/a", {'path':'/a', 'size':128, 'short_hash':'', 'full_hash': ''})
@@ -46,6 +46,10 @@ if __name__ == "__main__":
             assert False, "Expected failure, but passed."
         except sqlite3.IntegrityError:
             pass
+
+        api.register_duplicate("abc")
+        api.register_duplicate("def")
+        assert api.get_registered_duplicates() == ["abc", "def"]
 
         print(f"Basic tests passed: {connector_method.__name__, connector_params}")
 
