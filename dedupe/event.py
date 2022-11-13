@@ -30,3 +30,6 @@ def execute_handlers(event_name:str, data:Any) -> bool:
             return True
     return False
 
+# TODO - we'll manually load items here eventually, before implementing the dynamic loader
+def load_handlers():
+    pass
