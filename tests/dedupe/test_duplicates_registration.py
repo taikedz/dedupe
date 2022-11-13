@@ -1,7 +1,8 @@
 import os
 import unittest
 
-from dedupe.db import connect_sqlite, DbApi
+from dedupe.db.api_generic import DbApiGeneric
+from dedupe.db.api_sqlite import SQLiteApi
 
 class DedupeAlgorithmTest(unittest.TestCase):
     base_name = "local_test"
@@ -19,19 +20,19 @@ class DedupeAlgorithmTest(unittest.TestCase):
                 fh.write(data)
 
 
+    @classmethod
+    def tearDownClass(cls) -> None:
+        [os.remove(f"{cls.base_name}_{name}.txt") for name in cls.names_data.keys()]
+
+
     def setUp(self) -> None:
         # Make the short hash max be small enough so as to
         #  cause distinct short and long hashes
-        self.DB:DbApi = connect_sqlite("duplicates.db", short_hash_max_bytes=4)
+        self.DB:DbApiGeneric = SQLiteApi("duplicates.db", short_hash_max_bytes=4)
 
 
     def tearDown(self) -> None:
         os.remove("duplicates.db")
-
-
-    @classmethod
-    def tearDownClass(cls) -> None:
-        [os.remove(f"{cls.base_name}_{name}.txt") for name in cls.names_data.keys()]
 
 
     def test_duplicates(self):
