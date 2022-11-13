@@ -6,4 +6,4 @@ version_parts = {
 
 
 def get_version():
-    return f"{version_parts.major}.{version_parts.minor}.{version_parts.patch}"
+    return f"{version_parts['major']}.{version_parts['minor']}.{version_parts['patch']}"

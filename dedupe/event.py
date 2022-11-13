@@ -20,13 +20,13 @@ def register_handler(event_name, handler):
 def execute_handlers(event_name:str, data:Any) -> bool:
     """ Execute handlers registered for a given event.
 
-    If a handler returns True, further handlers are not called, and execute_handlers returns True.
+    If a handler returns a value resolving as True, further handlers are not called, and execute_handlers returns True.
 
     If no handlers return True, execute_handlers returns False
     """
     for handler in __EVENTS[event_name]:
-        res = handler(data)
-        if res is True:
+        was_handled = bool(handler(data))
+        if was_handled is True:
             return True
     return False
 
