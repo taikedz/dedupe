@@ -2,8 +2,10 @@
 from typing import Dict, List, Tuple
 from dataclasses import dataclass
 
+from dedupe.errors import DedupeError
 
-class DedupeDatabaseError(Exception): pass
+
+class DedupeDatabaseError(DedupeError): pass
 
 @dataclass
 class FieldDef:
@@ -13,7 +15,7 @@ class FieldDef:
     primary: bool = False
     foreign_key: Tuple[str,str] = None # foreign table, foreign name
 
-class FieldDefError(Exception): pass
+class FieldDefError(DedupeError): pass
 
 class DbApiGeneric:
     """ Generic Database API class.

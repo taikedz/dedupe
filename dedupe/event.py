@@ -4,12 +4,12 @@ from dedupe.errors import DedupeError
 
 __EVENTS = {}
 
-class HandlerImlementationError(DedupeError): pass
+class HandlerImplementationError(DedupeError): pass
 
 
 def register_handler(event_name, handler):
     if not callable(handler):
-        raise HandlerImlementationError(f"{type(handler)}:{handler} is not callable.")
+        raise HandlerImplementationError(f"{type(handler)}:{handler} is not callable.")
 
     if __EVENTS.get(event_name) is None:
         __EVENTS[event_name] = []
