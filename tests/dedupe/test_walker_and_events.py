@@ -3,7 +3,7 @@ from unittest import TestCase
 from dedupe.walker import DedupeWalker
 from dedupe import event
 
-from tests import testdata 
+from tests import tempfs 
 
 
 class TestDedupeWalker(TestCase):
@@ -20,7 +20,7 @@ class TestDedupeWalker(TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        cls.tempfs = testdata.TempFilesystem(cls.test_filesystem)
+        cls.tempfs = tempfs.TempFilesystem(cls.test_filesystem)
         cls.walker = DedupeWalker()
 
 

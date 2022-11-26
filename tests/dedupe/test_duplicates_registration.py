@@ -3,7 +3,7 @@ import unittest
 
 from dedupe.db.api_generic import DbApiGeneric
 from dedupe.db.api_sqlite import SQLiteApi
-from tests.testdata import TempFilesystem
+from tests.tempfs import TempFilesystem
 
 class DedupeAlgorithmTest(unittest.TestCase):
     dir_name = "local_data/"
