@@ -3,26 +3,27 @@ import unittest
 
 from dedupe.db.api_generic import DbApiGeneric
 from dedupe.db.api_sqlite import SQLiteApi
+from tests.testdata import TempFilesystem
 
 class DedupeAlgorithmTest(unittest.TestCase):
-    base_name = "local_test"
-    names_data = {
-        "one":"one and all",
-        "uno":"one and all",
-        "eins":"stuff",
-        "two":"ane and all",
-    }
+    dir_name = "local_data/"
+
+    file_content_data = """
+    local_data:
+        one.txt: one and all
+        uno.txt: one and all
+        eins.txt: stuff
+        two.txt: ane and all
+    """
 
     @classmethod
     def setUpClass(cls) -> None:
-        for name, data in cls.names_data.items():
-            with open(f"{cls.base_name}_{name}.txt", 'w') as fh:
-                fh.write(data)
+        cls.tempfs = TempFilesystem(cls.file_content_data)
 
 
     @classmethod
     def tearDownClass(cls) -> None:
-        [os.remove(f"{cls.base_name}_{name}.txt") for name in cls.names_data.keys()]
+        cls.tempfs.cleanup()
 
 
     def setUp(self) -> None:
@@ -41,16 +42,17 @@ class DedupeAlgorithmTest(unittest.TestCase):
         """
 
         # First entry, no duplicates possible
-        assert not self.DB.register_path(f"{self.base_name}_one.txt")
-        assert not self.DB.get_path_info(f"{self.base_name}_one.txt")["short_hash"]
+        assert not self.DB.register_path(f"{self.dir_name}/one.txt")
+        assert not self.DB.get_path_info(f"{self.dir_name}/one.txt")["short_hash"]
 
         # uno is same as one - should be found, and generate short and full hashes
-        assert self.DB.register_path(f"{self.base_name}_uno.txt")
+        assert self.DB.register_path(f"{self.dir_name}/uno.txt")
 
-        one_pi = self.DB.get_path_info(f"{self.base_name}_one.txt")
-        uno_pi = self.DB.get_path_info(f"{self.base_name}_uno.txt")
+        one_pi = self.DB.get_path_info(f"{self.dir_name}/one.txt")
+        uno_pi = self.DB.get_path_info(f"{self.dir_name}/uno.txt")
 
-        assert self.DB.find_hash_duplicates(one_pi["full_hash"]) == ['local_test_one.txt', 'local_test_uno.txt']
+        assert self.DB.find_hash_duplicates(one_pi["full_hash"]) == [
+            f'{self.dir_name}/one.txt', f'{self.dir_name}/uno.txt']
 
         assert one_pi["full_hash"]
         assert one_pi["short_hash"]
@@ -60,14 +62,14 @@ class DedupeAlgorithmTest(unittest.TestCase):
         assert (one_pi["full_hash"] != one_pi["short_hash"])
 
         # Different length causes no hashes
-        assert not self.DB.register_path(f"{self.base_name}_eins.txt")
-        assert not self.DB.get_path_info(f"{self.base_name}_eins.txt")["short_hash"]
-        assert not self.DB.get_path_info(f"{self.base_name}_eins.txt")["full_hash"]
+        assert not self.DB.register_path(f"{self.dir_name}/eins.txt")
+        assert not self.DB.get_path_info(f"{self.dir_name}/eins.txt")["short_hash"]
+        assert not self.DB.get_path_info(f"{self.dir_name}/eins.txt")["full_hash"]
 
         # Same length, different start data causes short hash but not full
-        assert not self.DB.register_path(f"{self.base_name}_two.txt")
+        assert not self.DB.register_path(f"{self.dir_name}/two.txt")
 
-        two_pi = self.DB.get_path_info(f"{self.base_name}_two.txt")
+        two_pi = self.DB.get_path_info(f"{self.dir_name}/two.txt")
         assert one_pi["size"] == two_pi["size"]
         assert one_pi["short_hash"] != two_pi["short_hash"]
         assert not two_pi["full_hash"]
