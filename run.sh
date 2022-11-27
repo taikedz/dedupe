@@ -8,11 +8,22 @@ case "$1" in
         pytest -s "$1"
         ;;
 
-    python)
-        python
+    dedupe)
+        shift
+        python "$HERE/deupe/deupe-main" "$@"
         ;;
 
-    *)
-        python "$@"
+    merge)
+        shift
+        python dedupe-tools/dd-merge-dir/main-merge.py "$@"
         ;;
+
+    lookup)
+        shift
+        python dedupe-tools/dd-lookup/dd-lookup.py "$@"
+        ;;
+    *)
+        echo "Unknown subcommand. Try dedupe/merge/lookup or provide a file in the tests/* dir"
+        ;;
+
 esac
