@@ -1,10 +1,16 @@
 from typing import Any
-from dedupe.errors import DedupeError
+from dedupe.errors import DedupeError, DedupeEvent
 
 
 __EVENTS = {}
 
 class HandlerImplementationError(DedupeError): pass
+
+class DedupeSkip(DedupeEvent):
+    """ Raise DedupeSkip with the processed path to cause the main loop to not descend into a directory
+    """
+    def __init__(self, path):
+        self.path = path
 
 
 def register_handler(event_name, handler):
@@ -29,7 +35,3 @@ def execute_handlers(event_name:str, data:Any) -> bool:
         if was_handled is True:
             return True
     return False
-
-# TODO - we'll manually load items here eventually, before implementing the dynamic loader
-def load_handlers():
-    pass

@@ -1,3 +1,4 @@
+import os
 from unittest import TestCase
 
 from dedupe.walker import DedupeWalker
@@ -5,6 +6,9 @@ from dedupe import event
 
 from tests import tempfs 
 
+def register_git_dir_path(path):
+    if os.path.isdir(os.path.join(path, '.git')):
+        raise event.DedupeSkip(path)
 
 class TestDedupeWalker(TestCase):
     test_filesystem = """
@@ -16,12 +20,20 @@ class TestDedupeWalker(TestCase):
         salad:
             tomato: red
             lettuce: green
+
+        # Should not appear in the results
+        repo:
+            .git:
+            raw_food: unprocessed
+            bin:
+                compost: rotten
     """
 
     @classmethod
     def setUpClass(cls) -> None:
         cls.tempfs = tempfs.TempFilesystem(cls.test_filesystem)
-        cls.walker = DedupeWalker()
+        cls.walker = DedupeWalker("vegetable")
+        event.register_handler("DIR-HASH", register_git_dir_path)
 
 
     @classmethod
@@ -39,7 +51,7 @@ class TestDedupeWalker(TestCase):
         event.register_handler("FILE-HASH",
             lambda name: self.names.append(name))
 
-        self.walker.walk_folder("vegetable")
+        self.walker.walk_folder()
 
         self.names.sort()
 
@@ -58,7 +70,7 @@ class TestDedupeWalker(TestCase):
         event.register_handler("DIR-HASH",
             lambda name: self.names.append(name))
 
-        self.walker.walk_folder("vegetable")
+        self.walker.walk_folder()
 
         self.names.sort()
 

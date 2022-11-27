@@ -1,12 +1,14 @@
 from dedupe import ddargs
-from dedupe import event
+from dedupe import plugin
 from dedupe.walker import DedupeWalker
-
+from dedupe.db import open_database
 
 def main():
     args = ddargs.parse_args()
 
-    event.load_handlers()
+    open_database("sqlite3", args.database)
+
+    plugin.load_plugins()
 
     walker = DedupeWalker()
 

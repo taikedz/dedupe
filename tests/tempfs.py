@@ -44,7 +44,8 @@ class TempFilesystem:
 
             else:
                 os.makedirs(os.path.sep.join(full_path))
-                self.make_temp_structure(v, full_path)
+                if v is not None:
+                    self.make_temp_structure(v, full_path)
 
 
     def cleanup(self):
