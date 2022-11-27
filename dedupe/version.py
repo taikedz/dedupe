@@ -1,7 +1,7 @@
 version_parts = {
     "major": 0,
     "minor": 0,
-    "patch": 2,
+    "patch": 3,
 }
 
 
