@@ -84,6 +84,11 @@ class DbApiGeneric:
 
         :return: whether duplicates were found when adding the path
         """
+        if self.lookup("path", main_path):
+            # Already existed
+            # We are probably re-processing a directory
+            return
+
         size = os.stat(main_path).st_size
 
         # ------- First, check for size duplicates

@@ -138,7 +138,7 @@ class SQLiteApi(DbApiGeneric):
 
 
     def lookup(self, property, value) -> List[Dict]:
-        properties = ["path", "size","short_hash","full_hash"]
+        properties = ["path", "size", "short_hash", "full_hash"]
 
         if not property in properties:
             raise KeyError(f"Invalid property {property}")
