@@ -78,10 +78,17 @@ def walk_and_merge(destination_dir, source_path):
     for nested_base, _nested_dirs, nested_files in os.walk(source_path):
         for nested_f in nested_files:
             sub_file  = os.path.join(nested_base, nested_f)
-            inner_path = os.path.sep.join((sub_file.split(os.path.sep)[1:]))
+            inner_path = os.path.sep.join(sub_file.split(os.path.sep)[1:])
             dest_file = os.path.join(destination_dir, inner_path)
 
             if not os.path.exists(dest_file):
+                # File does not exist, maybe parent dirs don't exist either
+                interim_dir = os.path.sep.join(inner_path.split(os.path.sep)[:1])
+                interim_dir = os.path.join(destination_dir, interim_dir)
+
+                if not os.path.isdir(interim_dir):
+                    os.makedirs(interim_dir)
+
                 shutil.move(sub_file, dest_file)
 
             elif CLASH_RESOLVE:
