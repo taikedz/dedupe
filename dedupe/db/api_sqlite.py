@@ -23,10 +23,12 @@ def get_field_type(type_spec:str):
 
 class SQLiteApi(DbApiGeneric):
     
-    def __init__(self, db_path:str):
+    def __init__(self, db_path:str, short_hash_max_bytes=None):
         self.db = sqlite3.connect(db_path)
 
-        DbApiGeneric.__init__(self)
+        DbApiGeneric.__init__(self,
+                              short_hash_max_bytes=short_hash_max_bytes
+                              )
 
 
     def __destroy__(self):

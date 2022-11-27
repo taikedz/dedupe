@@ -1,8 +1,10 @@
 
+import os
 from typing import Dict, List, Tuple
 from dataclasses import dataclass
 
 from dedupe.errors import DedupeError
+from dedupe.hash import hash_file
 
 
 class DedupeDatabaseError(DedupeError): pass
@@ -42,8 +44,8 @@ class DbApiGeneric:
     DUPLICATES_TABLE_NAME = "Duplicates"
 
 
-    def __init__(self):
-        """ Override this method.
+    def __init__(self, short_hash_max_bytes:int=None):
+        """ Override and callback this method:
 
         Open a connection to your database first, then call this super-class constructor
 
@@ -52,7 +54,7 @@ class DbApiGeneric:
         ```python
         def __init__(self, **db_details):
             # Do this first
-            dbengine.connect(**dbdetails)
+            dbengine.connect(**db_details)
 
             DbApiGeneric.__init__(self)
         ```
@@ -62,6 +64,57 @@ class DbApiGeneric:
 
         self.create_table(self.PATHS_TABLE_NAME, self.PATHS_TABLE)
         self.create_table(self.DUPLICATES_TABLE_NAME, self.DUPLICATES_TABLE)
+
+        self.short_bytes_max = (
+            short_hash_max_bytes if short_hash_max_bytes
+                else 1024*1024*4) # 4 MiB
+
+
+    def __update_hashes(self, files, field_name, operation):
+        for f in files:
+            if f[field_name] == '':
+                path = f["path"]
+                self.update_path(path, **{field_name: operation(path)})
+
+
+    def register_path(self, main_path:str) -> bool:
+        """ Register a new file path
+
+        :param main_path: the path to the target file
+
+        :return: whether duplicates were found when adding the path
+        """
+        size = os.stat(main_path).st_size
+
+        # ------- First, check for size duplicates
+        files = self.lookup("size", size)
+        # Add our new path afterwards
+        self.add_path(main_path, size=size)
+        if not files: return False
+
+        # ------- Size duplicates found, generate short hashes
+        _shorthash = lambda _p: hash_file(_p, max_bytes=self.short_bytes_max)
+
+        main_short_hash = _shorthash(main_path)
+        self.__update_hashes(files, "short_hash", _shorthash)
+
+        # ------- Check for short hash duplicates
+        files = self.lookup("short_hash", main_short_hash)
+        # Add our shorthas afterwards
+        self.update_path(main_path, short_hash=main_short_hash)
+        if not files: return False
+
+        # ------- Short hash duplicates found,  generate full hashes
+        main_full_hash = hash_file(main_path)
+        self.__update_hashes(files, "full_hash", hash_file)
+
+        files = self.lookup("full_hash", main_full_hash)
+        self.update_path(main_path, full_hash=main_full_hash)
+        if not files: return False
+
+        self.register_duplicate(main_full_hash)
+
+        return True
 
 
     # ==============================

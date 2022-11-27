@@ -1,10 +1,16 @@
 from typing import Any
-from dedupe.errors import DedupeError
+from dedupe.errors import DedupeError, DedupeEvent
 
 
 __EVENTS = {}
 
 class HandlerImplementationError(DedupeError): pass
+
+class DedupeSkip(DedupeEvent):
+    """ Raise DedupeSkip with the processed path to cause the main loop to not descend into a directory
+    """
+    def __init__(self, path):
+        self.path = path
 
 
 def register_handler(event_name, handler):
@@ -29,39 +35,3 @@ def execute_handlers(event_name:str, data:Any) -> bool:
         if was_handled is True:
             return True
     return False
-
-
-
-if __name__ == "__main__":
-    _handlers_executed = []
-
-    def _a_handler(d):
-        _handlers_executed.append("A")
-        return d == "a"
-
-    def _b_handler(d):
-        _handlers_executed.append("B")
-        return "b" in d
-
-    def _reset_handler_count():
-        global _handlers_executed
-        _handlers_executed = []
-
-    register_handler("test", _a_handler)
-    register_handler("test", _b_handler)
-
-    assert execute_handlers("test", "a")
-    assert _handlers_executed == ["A"]
-    _reset_handler_count()
-
-    assert execute_handlers("test", "abacus")
-    assert _handlers_executed == ["A", "B"]
-    _reset_handler_count()
-
-    assert not execute_handlers("test", "other")
-    assert _handlers_executed == ["A", "B"]
-    _reset_handler_count()
-
-    assert not execute_handlers("undefined", None)
-
-    print("Basic tests passed")
