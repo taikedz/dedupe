@@ -5,7 +5,7 @@ from dedupe.db import get_database
 # --------------------------------------------------------
 # TODO - we'll manually load items here eventually,
 # before implementing the dynamic loader
-MAIN_DB = get_database()
+MAIN_DB = None
 
 def register_file_path(path):
     MAIN_DB.register_path(path)
@@ -17,5 +17,7 @@ def register_git_dir_path(path):
 # --------------------------------------------------------
 
 def load_plugins():
+    global MAIN_DB
+    MAIN_DB = get_database()
     event.register_handler("FILE-HASH", register_file_path)
     event.register_handler("DIR-HASH", register_git_dir_path)

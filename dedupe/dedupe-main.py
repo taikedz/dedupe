@@ -10,10 +10,10 @@ def main():
 
     plugin.load_plugins()
 
-    walker = DedupeWalker()
 
     for dirpath in args.folders:
-        walker.walk_folder(dirpath)
+        walker = DedupeWalker(dirpath)
+        walker.walk_folder()
 
 
 if __name__ == "__main__":
