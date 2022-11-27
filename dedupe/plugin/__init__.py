@@ -8,10 +8,14 @@ from dedupe.db import get_database
 MAIN_DB = None
 
 def ignore_common_files(path:str):
-    if path in ["Thumbs.db", "._DS_Store"]:
+    filename = os.path.basename(path)
+
+    if filename in ["Thumbs.db", ".DS_Store"]:
+        # We could cure these ills right here and now ...
+        #os.remove(path)
         raise event.DedupeSkip(path)
 
-    if path.endswith(".pyc"):
+    if filename.endswith(".pyc") or filename.startswith("._"):
         raise event.DedupeSkip(path)
 
 
@@ -23,6 +27,7 @@ def register_file_path(path):
 # Do not try to process a git repo for duplicates
 def register_git_dir_path(path):
     if os.path.isdir(os.path.join(path, '.git')):
+        print(f"Skipping git repo {path}")
         raise event.DedupeSkip(path)
 # --------------------------------------------------------
 
@@ -31,4 +36,4 @@ def load_plugins():
     MAIN_DB = get_database()
     event.register_handler("FILE-FIND", ignore_common_files)
     event.register_handler("FILE-HASH", register_file_path)
-    event.register_handler("DIR-HASH", register_git_dir_path)
+    event.register_handler("DIR-FIND", register_git_dir_path)
