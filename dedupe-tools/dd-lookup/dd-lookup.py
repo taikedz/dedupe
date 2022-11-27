@@ -1,6 +1,7 @@
 # Extremely janky code for querying the dulicates dtabase
 # In dire need of a cleanup
 
+import os
 import sqlite3
 import argparse
 
@@ -43,7 +44,8 @@ def main():
 
 
     if args.cmd == "path":
-        path_hash_set = [x for x in cursor.execute("SELECT full_hash FROM Paths WHERE path=?", (args.path,))]
+        path = os.path.abspath(args.path)
+        path_hash_set = [x for x in cursor.execute("SELECT full_hash FROM Paths WHERE path=?", (path,))]
         if path_hash_set and path_hash_set[0][0]:
             print_hash_duplicates(path_hash_set[0][0])
 
@@ -62,12 +64,14 @@ def main():
             print("")
 
     elif args.cmd == "info":
-        path_hash_set = [x for x in cursor.execute("SELECT size,short_hash,full_hash FROM Paths WHERE path=?", (args.path,))]
+        path = os.path.abspath(args.path)
+        path_hash_set = [x for x in cursor.execute("SELECT path,size,short_hash,full_hash FROM Paths WHERE path=?", (path,))]
         if path_hash_set:
             print(
-            f"SIZE={path_hash_set[0][0]}\n"
-            f"SHORT_HASH={path_hash_set[0][1]}\n"
-            f"FULL_HASH={path_hash_set[0][2]}"
+            f"PATH={path_hash_set[0][0]}\n"
+            f"SIZE={path_hash_set[0][1]}\n"
+            f"SHORT_HASH={path_hash_set[0][2]}\n"
+            f"FULL_HASH={path_hash_set[0][3]}"
             )
 
 

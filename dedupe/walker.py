@@ -6,7 +6,7 @@ class DedupeWalker:
 
     def __init__(self, base_path):
         self.skip_paths = []
-        self.base_path = base_path
+        self.base_path = os.path.abspath(base_path)
 
 
     def process_file(self, file_path):
@@ -38,7 +38,10 @@ class DedupeWalker:
     def walk_folder(self):
         print(f"Processing {self.base_path}")
 
-        self.process_dir(self.base_path)
+        try:
+            self.process_dir(self.base_path)
+        except event.DedupeSkip:
+            return
 
         for parent_dir, child_dirs, child_files in os.walk(self.base_path):
             if self.parent_was_skipped(parent_dir):
