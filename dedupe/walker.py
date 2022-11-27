@@ -11,6 +11,7 @@ class DedupeWalker:
 
     def process_file(self, file_path):
         if os.path.isfile(file_path):
+            event.execute_handlers("FILE-FIND", file_path)
             print(f"WALKER: Processing file: {file_path}")
             event.execute_handlers("FILE-HASH", file_path)
         else:
@@ -19,6 +20,7 @@ class DedupeWalker:
 
     def process_dir(self, dir_path):
         if os.path.isdir(dir_path):
+            event.execute_handlers("DIR-FIND", dir_path)
             print(f"WALKER: Processing dir : {dir_path}")
             event.execute_handlers("DIR-HASH", dir_path)
         else:
