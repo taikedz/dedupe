@@ -94,6 +94,7 @@ class SQLiteApi(DbApiGeneric):
         except:
             if c != None:
                 c.close()
+            print(f"FAILED:\n  Query = {query}\n  Values = {values}")
             raise
         return [d for d in res]
 
@@ -130,7 +131,15 @@ class SQLiteApi(DbApiGeneric):
 
     def register_duplicate(self, full_hash):
         query = f"INSERT INTO {self.DUPLICATES_TABLE_NAME}(full_hash) VALUES (?)"
-        self._query(query, (full_hash,))
+        try:
+            self._query(query, (full_hash,))
+        except sqlite3.IntegrityError:
+            new_query = f"SELECT full_hash FROM {self.DUPLICATES_TABLE_NAME} WHERE full_hash=?"
+            if not self._query(new_query, (full_hash,)):
+                # Found no entries, meaning we got a bogus integrity check
+                raise
+            # else, we were trying to re-register a hash
+            # FIXME - this is a problem in the main algorithm
 
 
     def get_registered_duplicates(self) -> List[str]:
