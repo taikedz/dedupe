@@ -2,6 +2,9 @@ import sqlite3
 from typing import Dict, List
 
 from dedupe.db.api_generic import DbApiGeneric, DedupeDatabaseError, FieldDef, FieldDefError
+from dedupe.logger import get_logger
+
+LOG = get_logger("DB_SQLITE")
 
 TYPES = {
     # Workaround: Implementing 'int' type as TEXT to preserve ginormous numbers
@@ -43,10 +46,10 @@ class SQLiteApi(DbApiGeneric):
 
     def create_table(self, table_name:str, table_def:List[FieldDef]):
         if self._table_exists(table_name):
-            print(f"Table {table_name} exists, re-using.")
+            LOG.debug(f"Table {table_name} exists, re-using.")
             return
         else:
-            print(f"Creating table {table_name}")
+            LOG.debug(f"Creating table {table_name}")
 
         field_queries = []
 
@@ -82,7 +85,7 @@ class SQLiteApi(DbApiGeneric):
         if index_query:
             self._query(index_query)
         
-        print("-- Created.")
+        LOG.debug("-- Created.")
 
 
     def _query(self, query:str, *values) -> List[Dict]:
@@ -94,7 +97,7 @@ class SQLiteApi(DbApiGeneric):
         except:
             if c != None:
                 c.close()
-            print(f"FAILED:\n  Query = {query}\n  Values = {values}")
+            LOG.error(f"FAILED:\n  Query = {query}\n  Values = {values}")
             raise
         return [d for d in res]
 

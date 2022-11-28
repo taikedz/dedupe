@@ -1,6 +1,9 @@
 import os
 
 from dedupe import event
+from dedupe.logger import get_logger
+
+LOG = get_logger("walker")
 
 class DedupeWalker:
 
@@ -12,19 +15,19 @@ class DedupeWalker:
     def process_file(self, file_path):
         if os.path.isfile(file_path):
             event.execute_handlers("FILE-FIND", file_path)
-            print(f"WALKER: Processing file: {file_path}")
+            LOG.info(f"Processing file: {file_path}")
             event.execute_handlers("FILE-HASH", file_path)
         else:
-            print(f"WALKER: ERROR: !! Could not locate file {file_path}")
+            LOG.error(f"Could not locate file {file_path}")
 
 
     def process_dir(self, dir_path):
         if os.path.isdir(dir_path):
             event.execute_handlers("DIR-FIND", dir_path)
-            print(f"WALKER: Processing dir : {dir_path}")
+            LOG.info(f"Processing dir : {dir_path}")
             event.execute_handlers("DIR-HASH", dir_path)
         else:
-            print(f"WALKER: ERROR: !! Could not locate dir {dir_path}")
+            LOG.error(f"Could not locate dir {dir_path}")
 
 
     def parent_was_skipped(self, path:str):
@@ -36,7 +39,7 @@ class DedupeWalker:
 
 
     def walk_folder(self):
-        print(f"Processing {self.base_path}")
+        LOG.info(f"Processing specified dir: {self.base_path}")
 
         try:
             self.process_dir(self.base_path)
