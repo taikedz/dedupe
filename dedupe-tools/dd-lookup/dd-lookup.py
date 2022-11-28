@@ -1,6 +1,7 @@
 # Extremely janky code for querying the dulicates dtabase
 # In dire need of a cleanup
 
+import json
 import os
 import sqlite3
 import argparse
@@ -35,9 +36,11 @@ def main():
     db = sqlite3.connect(args.database)
     cursor = db.cursor()
 
-    def print_hash_duplicates(hash):
+    # TO DO - jsonify the rest of the outputs
+
+    def list_hash_duplicates(hash):
         entries = [x for x in cursor.execute("SELECT path FROM Paths WHERE full_hash=?", (hash,))]
-        [print(row[0]) for row in entries]
+        [row[0] for row in entries]
 
     def get_duplicate_hashes():
         return [x[0] for x in cursor.execute("SELECT full_hash FROM Duplicates")]
@@ -47,10 +50,10 @@ def main():
         path = os.path.abspath(args.path)
         path_hash_set = [x for x in cursor.execute("SELECT full_hash FROM Paths WHERE path=?", (path,))]
         if path_hash_set and path_hash_set[0][0]:
-            print_hash_duplicates(path_hash_set[0][0])
+            [print[x] for x in list_hash_duplicates(path_hash_set[0][0])]
 
     elif args.cmd == "hash":
-        print_hash_duplicates(args.hash)
+        [print[x] for x in list_hash_duplicates(args.hash)]
 
     elif args.cmd == "list":
         [print(h) for h in get_duplicate_hashes()]
@@ -59,20 +62,23 @@ def main():
         dupe_hashes = get_duplicate_hashes()
 
         for hash in dupe_hashes:
-            print(f"--- {hash}")
-            print_hash_duplicates(hash)
+            # print a comment line, then a JSON dump
+            print(f"# HASH   {hash}")
+            json_obj = {"hash": hash}
+            json_obj["paths"] = list_hash_duplicates(hash)
+            print(json.dumps(json_obj))
             print("")
 
     elif args.cmd == "info":
         path = os.path.abspath(args.path)
         path_hash_set = [x for x in cursor.execute("SELECT path,size,short_hash,full_hash FROM Paths WHERE path=?", (path,))]
         if path_hash_set:
-            print(
-            f"PATH={path_hash_set[0][0]}\n"
-            f"SIZE={path_hash_set[0][1]}\n"
-            f"SHORT_HASH={path_hash_set[0][2]}\n"
-            f"FULL_HASH={path_hash_set[0][3]}"
-            )
+            print(json.dumps({
+                "path":{path_hash_set[0][0]},
+                "size":{path_hash_set[0][1]},
+                "short_hash":{path_hash_set[0][2]},
+                "full_hash":{path_hash_set[0][3]},
+            }))
 
 
 if __name__ == "__main__":
