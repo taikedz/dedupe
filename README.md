@@ -6,13 +6,7 @@ Only processes regular files and folders ; skips symlinks and non-plain-file, no
 
 ## Store management
 
-All hashed files are stored to `~/.dedupe/hashes.sqlite`
-
-Any attempt to query a file, for example during merge or compare, will store the hash and the path. (To simplify database, perhpas the hash should not be the table key.) The store can also be explicitly update with `register` subcommand.
-
-Index the path column, only store absolute paths.
-
-For any given path, use a short hash, and a full hash. Short hashes should allow for processing stores of large files faster.
+Any attempt to query a file, for example during merge or compare, will store the hash and the path. The store can also be explicitly pre-populated with the `register` subcommand.
 
 ```sh
 # Walk a path and add all files
@@ -31,8 +25,6 @@ Compare specified dirs.
 
 By default, this scours just the files of the specified directory, and lists files that have matching hashes
 
-Can be caused to be recursive with `-R`
-
 ```sh
 dedupe compare .../path1 .../path2
 ```
@@ -41,7 +33,7 @@ dedupe compare .../path1 .../path2
 
 Merge two directories's files. Recurse into subfolders with `-R`
 
-Merging moves files from the source dir to the target dir, if there are no duplicates by hash
+Merging moves files from the source dir to the target dir, if there are no duplicates by hash. Any files ignored for any reason are left in-place.
 
 ```sh
 # Merge path1 to path2
@@ -56,7 +48,9 @@ dedupe push .../path
 
 ## Flatten
 
-Flatten a deep folder tree into a flat folder - that is, bring all files under the folder's tree as direct children of the folder. Delete duplicate files. Ignore symlinks. Symlinks at top level are checked - if they point to files deep in the folder, these are moved up to top level, else are left alone.
+(TBD)
+
+Flatten a deep folder tree into a flat folder - that is, bring all files under the folder's tree as direct children of the folder. Leaves duplicate files in-place. Ignore symlinks. Symlinks at top level are checked - if they point to files deep in the folder, these are moved up to top level, else are left alone.
 
 ```sh
 dedupe flatten .../path
@@ -89,6 +83,8 @@ Becomes flattened, with hash-duplicates removed.
 ```
 
 ## Ignore
+
+(TBD)
 
 There are two ways to identify a path to ignore: by its name, or by the existence of a particular child path ("beacon" paths).
 
