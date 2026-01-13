@@ -22,7 +22,7 @@ main() {
     ensure_venv
 
     export PYTHONPATH="$HEREDIR:${PYTHONPATH:-}"
-    pytest "$HEREDIR/unittests"
+    pytest "$HEREDIR/unittests" "$@"
 }
 
 main "$@"

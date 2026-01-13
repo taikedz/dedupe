@@ -5,9 +5,17 @@ from dedupe.registry import HashRegistry
 
 
 def run(args):
+    res = _compare(args)
+    for path,dupes in res.items():
+        print(f"Duplicates for '{path}': {[f'  {p}' for p in dupes]}")
+
+
+def _compare(args):
     # straight compare - just the files under here
     files1 = os.listdir(args.path1)
     files2 = os.listdir(args.path2)
+
+    results = {}
 
     with HashRegistry() as db:
         add_hashes = lambda p_list: [db.hashForPath(p, add=True) for p in p_list]
@@ -24,4 +32,6 @@ def run(args):
         elif shorthash in shorts2:
             dupes = [p for p,short2,_ in hashpaths2 if shorthash == short2]
         if dupes:
-            output.printline(f"Duplicates for '{path}': {''.join([f'\n  {p}' for p in dupes])}\n")
+            results[path] = dupes
+
+    return results
