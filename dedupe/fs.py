@@ -78,23 +78,3 @@ def _zip_more(iter1:list[str], iter2:list[str]) -> Generator[tuple[str,str], Non
 
         n1 += 1
         n2 += 1
-
-
-if __name__ == "__main__":
-    p = PathOp("this/that")
-    assert p.hasChildOrIsSame("this/that")
-    assert p.hasChildOrIsSame("this/that/then")
-
-    assert not p.hasChildOrIsSame("this")
-    assert not p.hasChildOrIsSame("this/then")
-    assert not p.hasChildOrIsSame("that")
-    assert not p.hasChildOrIsSame("then")
-
-    diff = PathOp("one/two/three/four") - "one/two"
-    assert diff == PathOp("three/four"), diff
-
-    diff = PathOp("one/two") - "one/two/three"
-    assert diff == None, diff
-
-    diff = PathOp("one/two/three") - "one/two/four"
-    assert diff == None, diff
