@@ -22,7 +22,12 @@ main() {
     ensure_venv
 
     export PYTHONPATH="$HEREDIR:${PYTHONPATH:-}"
-    pytest "$HEREDIR/unittests" "$@"
+
+    if [[ -z "$*" ]]; then
+        pytest "$HEREDIR/unittests" "$@"
+    else
+        pytest "$@"
+    fi
 }
 
 main "$@"

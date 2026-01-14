@@ -1,9 +1,10 @@
 from argparse import Namespace
 from dedupe import compare
 from unittests.makefiles import FileSet
+from unittests.util import RegistryTest
 
 
-class TestCompare:
+class TestCompare(RegistryTest):
     def testCompareNoDupes(self):
         fileset = {
             "artists/1-leo": "leonardo",

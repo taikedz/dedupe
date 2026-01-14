@@ -29,10 +29,10 @@ class FileSet:
 
     def delete_files(self):
         shutil.rmtree(self._hdir)
-        # for path,_folders,files in os.walk(self._hdir):
-        #     for file in files:
-        #         try:
-        #             os.remove(f"{path}/{file}")
-        #         except Exception as e:
-        #             print(e)
-        # os.removedirs(self._hdir)
+
+
+    def all_files(self) -> list[str]:
+        items = []
+        for parent,_folders,files in os.walk(self._hdir):
+            items.extend([f"{parent}/{f}" for f in files])
+        return sorted(items)

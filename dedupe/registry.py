@@ -5,11 +5,12 @@ import sqlite3
 import dedupe.hashutil as hashutil
 
 
-GLOBAL_REGISTY = os.path.expanduser("~/.dedupe/registry.sqlite")
-
+GLOBAL_REGISTRY = os.path.expanduser("~/.dedupe/registry.sqlite")
 
 class HashRegistry:
-    def __init__(self, filepath=GLOBAL_REGISTY, temp=False):
+    def __init__(self, filepath=None, temp=False):
+        if filepath is None:
+            filepath = GLOBAL_REGISTRY
         os.makedirs(pathlib.Path(filepath).parent, exist_ok=True)
 
         self._path = filepath
@@ -35,6 +36,7 @@ class HashRegistry:
     
 
     def open(self):
+        assert None, self._path
         self._db = sqlite3.connect(self._path)
         self._cursor = self._db.cursor()
         res = [x for x in self._cursor.execute("SELECT * FROM sqlite_master WHERE type=? AND name=?", ("table", "HashedFiles"))]
@@ -47,7 +49,7 @@ class HashRegistry:
         return [x for x in self._cursor.execute("SELECT path,shorthash,hash FROM HashedFiles")]
 
 
-    def hashForPath(self, path, add=False):
+    def hashForPath(self, path, add=False) -> tuple[str,str,str]:
         abspath = str(pathlib.Path(path).absolute())
         res = [x for x in self._cursor.execute("SELECT path,shorthash,hash FROM HashedFiles WHERE path=?", (abspath,)) ]
         assert len(res) <= 1, f"Hash list for single path should have no more than one. Found: {res}"
@@ -95,7 +97,7 @@ class HashRegistry:
 
 def run(args):
     if args.path == r"%drop":
-        os.remove(GLOBAL_REGISTY)
+        os.remove(GLOBAL_REGISTRY)
         return
     
     with HashRegistry() as db:

@@ -1,7 +1,6 @@
 import os
 from pathlib import Path
 
-from dedupe import hashutil
 from dedupe.fs import PathOp
 from dedupe.registry import HashRegistry
 
@@ -29,10 +28,11 @@ def _merge_files(dest_path, source_path, db:HashRegistry):
     sabspaths = [f.absolute() for f in sfiles if f.is_file()]
 
     # Ensure all duplicate hashes have been calculated upfront
+    # FIXME - we need to get hashes of EVERYTHING in the destination tree
     [db.addFile(path) for path in dabspaths+sabspaths]
 
     dhashes = [db.hashForPath(d, add=True) for d in dabspaths]
-    fullhashes = [f for _p,_s,f in dhashes]
+    fullhashes = [f for p,_s,f in dhashes]
 
     for spath in sabspaths:
         _p,_s, s_full = db.hashForPath(spath, add=True)
@@ -50,10 +50,7 @@ def merge_deep(dest_dir, source_dir):
     dest = Path(dest_dir)
     source = Path(source_dir)
 
-    name = hashutil.hash_string(str(dest.absolute()))
-    regtemp = f"/tmp/{name}.sqlite"
-
-    with HashRegistry(regtemp, temp=True) as db:
+    with HashRegistry() as db:
         for parent, folders, _ in os.walk(source):
             rel_parent = PathOp(parent) - source
 

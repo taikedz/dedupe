@@ -9,13 +9,13 @@ class PathOp(pathlib.Path):
         return PathOp(pathlib.Path.absolute(self))
     
 
-    def parts(self):
-        return tuple(s for s in str(self.absolute()).split("/") if s)
+    def path_parts(self):
+        return [s for s in str(self.absolute()).split("/") if s]
     
 
     def __sub__(self, other):
-        other_parts = list(PathOp(other).absolute().parts())
-        my_parts = list(self.absolute().parts())
+        other_parts = list(PathOp(other).absolute().path_parts())
+        my_parts = list(self.absolute().path_parts())
 
         while other_parts and my_parts and other_parts[0] == my_parts[0]:
             other_parts.pop(0)
@@ -30,8 +30,8 @@ class PathOp(pathlib.Path):
     def hasChildOrIsSame(self, other) -> bool:
         other = PathOp(other)
 
-        other_parts = other.parts()
-        self_parts = self.parts()
+        other_parts = other.path_parts()
+        self_parts = self.path_parts()
 
         if self_parts == other_parts:
             return True
