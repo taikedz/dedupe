@@ -36,7 +36,6 @@ class HashRegistry:
     
 
     def open(self):
-        assert None, self._path
         self._db = sqlite3.connect(self._path)
         self._cursor = self._db.cursor()
         res = [x for x in self._cursor.execute("SELECT * FROM sqlite_master WHERE type=? AND name=?", ("table", "HashedFiles"))]

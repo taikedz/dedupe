@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 
+from dedupe import fs
 from dedupe.fs import PathOp
 from dedupe.registry import HashRegistry
 
@@ -21,14 +22,13 @@ def _merge_files(dest_path, source_path, db:HashRegistry):
     dest = Path(dest_path).absolute()
     source = Path(source_path).absolute()
 
-    dfiles = [dest/p for p in os.listdir(dest)]
-    dabspaths = [f.absolute() for f in dfiles if f.is_file()]
+    dfiles = fs.all_files(dest)
+    dabspaths = [Path(f).absolute() for f in dfiles if Path(f).is_file()]
 
     sfiles = [source/p for p in os.listdir(source)]
     sabspaths = [f.absolute() for f in sfiles if f.is_file()]
 
     # Ensure all duplicate hashes have been calculated upfront
-    # FIXME - we need to get hashes of EVERYTHING in the destination tree
     [db.addFile(path) for path in dabspaths+sabspaths]
 
     dhashes = [db.hashForPath(d, add=True) for d in dabspaths]

@@ -2,6 +2,8 @@ import os
 from pathlib import Path
 import shutil
 
+from dedupe import fs
+
 
 class FileSet:
     def __init__(self, holddir:str, files:dict[str,str]):
@@ -32,7 +34,4 @@ class FileSet:
 
 
     def all_files(self) -> list[str]:
-        items = []
-        for parent,_folders,files in os.walk(self._hdir):
-            items.extend([f"{parent}/{f}" for f in files])
-        return sorted(items)
+        return fs.all_files(self._hdir)

@@ -1,9 +1,8 @@
 import os
 from dedupe import registry
 
-
 class RegistryTest:
-    test_db = "testing.sqlite" # FIXME - use an actual temp file
+    test_db = "testing.sqlite"
 
     def setup_class(self):
         # Don't update a main registry

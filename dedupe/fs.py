@@ -3,6 +3,13 @@ import pathlib
 from typing import Generator
 
 
+def all_files(path):
+    items = []
+    for parent,_folders,files in os.walk(path):
+        items.extend([f"{parent}/{f}" for f in files])
+    return sorted(items)
+
+
 class PathOp(pathlib.Path):
 
     def absolute(self):
