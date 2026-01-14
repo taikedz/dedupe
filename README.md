@@ -48,8 +48,6 @@ dedupe push .../path
 
 ## Flatten
 
-(TBD)
-
 Flatten a deep folder tree into a flat folder - that is, bring all files under the folder's tree as direct children of the folder. Leaves duplicate files in-place. Ignore symlinks. Symlinks at top level are checked - if they point to files deep in the folder, these are moved up to top level, else are left alone.
 
 ```sh
