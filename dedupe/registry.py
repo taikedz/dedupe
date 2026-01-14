@@ -74,8 +74,12 @@ class HashRegistry:
                 return
             for rowid,ef_path, longhash in existing_files:
                 if longhash == '':
-                    new_hash = hashutil.fullHash(ef_path)
-                    self._cursor.execute("UPDATE HashedFiles SET hash=? WHERE rowid=?", (new_hash, rowid))
+                    if pathlib.Path(ef_path).exists():
+                        new_hash = hashutil.fullHash(ef_path)
+                        self._cursor.execute("UPDATE HashedFiles SET hash=? WHERE rowid=?", (new_hash, rowid))
+                    else:
+                        # disappeared since
+                        self.dropFile(ef_path)
 
             self._cursor.execute("INSERT INTO HashedFiles VALUES (?, ?, ?)", (path, new_short_hash, hashutil.fullHash(path)))
         else:
