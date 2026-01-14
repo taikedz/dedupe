@@ -25,6 +25,7 @@ class TestMerge(RegistryTest):
         turtles = "testing/turtles"
         with FileSet("testing", fileset) as fs:
             merge.merge(artists, turtles)
+
             assert fs.all_files() ==  [
                 'testing/artists/a2-pic',
                 'testing/artists/a3-raph',

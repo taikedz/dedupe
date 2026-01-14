@@ -1,6 +1,6 @@
 import os
 
-from dedupe import output
+from dedupe import ignore
 from dedupe.registry import HashRegistry
 
 
@@ -18,7 +18,7 @@ def _compare(args):
     results = {}
 
     with HashRegistry() as db:
-        add_hashes = lambda p_list: [db.hashForPath(p, add=True) for p in p_list]
+        add_hashes = lambda p_list: [db.hashForPath(p, add=True) for p in p_list if not ignore.should_ignore(p)]
         hashpaths1 = add_hashes( [f"{args.path1}/{f1}" for f1 in files1] )
         hashpaths2 = add_hashes( [f"{args.path2}/{f2}" for f2 in files2] )
 

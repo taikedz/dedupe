@@ -2,15 +2,14 @@ import os
 import pathlib
 import sqlite3
 
+from dedupe import config, ignore
 import dedupe.hashutil as hashutil
 
-
-GLOBAL_REGISTRY = os.path.expanduser("~/.dedupe/registry.sqlite")
 
 class HashRegistry:
     def __init__(self, filepath=None, temp=False):
         if filepath is None:
-            filepath = GLOBAL_REGISTRY
+            filepath = config.GLOBAL_REGISTRY
         os.makedirs(pathlib.Path(filepath).parent, exist_ok=True)
 
         self._path = filepath
@@ -62,6 +61,9 @@ class HashRegistry:
 
 
     def addFile(self, path):
+        if ignore.should_ignore(path):
+            return
+
         path = str(pathlib.Path(path).absolute())
 
         new_short_hash = hashutil.shortHash(path)
@@ -87,6 +89,11 @@ class HashRegistry:
             for f in files:
                 self.addFile(f"{parentDir}/{f}")
 
+            dirscopy = folders[:]
+            for d in dirscopy:
+                if ignore.should_ignore(f"{parentDir}/{d}"):
+                    folders.remove(d)
+
 
     def dropFile(self, abspath):
         self._cursor.execute("DELETE FROM HashedFiles WHERE path=?", (abspath,))
@@ -96,7 +103,7 @@ class HashRegistry:
 
 def run(args):
     if args.path == r"%drop":
-        os.remove(GLOBAL_REGISTRY)
+        os.remove(config.GLOBAL_REGISTRY)
         return
     
     with HashRegistry() as db:
