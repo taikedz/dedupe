@@ -88,7 +88,7 @@ Ignoring affects hash registration as well as comparison and merge. Any ignored 
 
 ### direct names
 
-Before processing a path, its name is checked against the ignore names list. If the path matches an entry in the `ignore-names` list, that path is not processed.
+Before processing a path, its name is checked against the ignore names list. If the path item's basename matches an entry in the `ignore-names` list, that path is not processed.
 
 Example in `~/.dedupe/ignore` file
 
