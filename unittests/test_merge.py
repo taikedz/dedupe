@@ -35,7 +35,7 @@ class TestMerge(RegistryTest):
                 'testing/artists/modern/picasso',
                 'testing/artists/t2-don',
                 'testing/artists/t4-mick',
-                # t1-leo stays in turtles, because deep file genius/a1-leo takes precedence in destinatin
+                # t1-leo stays in turtles, because deep file genius/a1-leo takes precedence in destination
                 'testing/turtles/leader/t1-leo',
                 'testing/turtles/t3-raph',
             ]

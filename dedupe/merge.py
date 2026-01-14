@@ -15,14 +15,15 @@ def do_merge(dest_path, source_path, recursive):
 
 def merge(dest_path, source_path):
     with HashRegistry() as db:
-        _merge_files(dest_path, source_path, db)
+        _merge_files(dest_path, source_path, db, dest_path)
 
 
-def _merge_files(dest_path, source_path, db:HashRegistry):
+def _merge_files(dest_path, source_path, db:HashRegistry, dest_root):
     dest = Path(dest_path).absolute()
     source = Path(source_path).absolute()
 
-    dfiles = fs.all_files(dest)
+    # FIXME we check down, but not up to dest root!
+    dfiles = fs.all_files(dest_root)
     dabspaths = [Path(f).absolute() for f in dfiles if Path(f).is_file()]
 
     sfiles = [source/p for p in os.listdir(source)]
@@ -61,7 +62,8 @@ def merge_deep(dest_dir, source_dir):
                 raise RuntimeError(f"{dest/rel_parent} already exists and is not a directory")
             os.makedirs(dest/rel_parent, exist_ok=True)
 
-            _merge_files(dest/rel_parent, source/rel_parent, db)
+            # FIXME source must compare against all hashes from root of merge, not just deep dest
+            _merge_files(dest/rel_parent, source/rel_parent, db, dest)
 
             # Iterate the folders - if any should be ignored, remove them in-place
             #  from the folders list, to avoid descending into them
