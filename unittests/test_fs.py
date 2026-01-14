@@ -12,6 +12,8 @@ class TestFs:
         assert not p.hasChildOrIsSame("that")
         assert not p.hasChildOrIsSame("then")
 
+
+    def testDiff(self):
         diff = PathOp("one/two/three/four") - "one/two"
         assert diff == PathOp("three/four"), diff
 
