@@ -84,34 +84,36 @@ Becomes flattened, with hash-duplicates removed.
 
 ## Ignore
 
-(TBD)
+There are two ways to identify a path to ignore: by its name, or by the existence of a particular child path ("beacon" paths) under a directory.
 
-There are two ways to identify a path to ignore: by its name, or by the existence of a particular child path ("beacon" paths).
-
-Ignoring affects hash registration as well as comparison and merge. Any ignored items on the source path of a merge is left in place.
+Ignoring affects hash registration as well as comparison and merge. Any ignored items on the source path of a merge is left in place. Ignored items are not registered in the hash database.
 
 ### direct names
 
 Before processing a path, its name is checked against the ignore names list. If the path matches an entry in the `ignore-names` list, that path is not processed.
 
-Example `~/.dedupe/ignore-names` file
+Example in `~/.dedupe/ignore` file
 
 ```
-.DS_Store
+# MacOS filesystem litter
 ._*
+# Some trash folder
 .Trash/
 ```
 
 ### beacons
+
+Beacon paths are specified by starting with `./`
 
 On entering any dir, the beacon paths are checked:
 
 * If the current dir has any of the specified paths
 * then the whole directory is immediately skipped
 
-Example `~/.dedupe/ignore-beacons` file
+Example in `~/.dedupe/ignore` file
 
 ```
-.git/
-*.venv/bin/activate
+
+./.git/
+./*.venv/bin/activate
 ```
