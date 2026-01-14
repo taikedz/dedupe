@@ -5,7 +5,7 @@ from unittests.util import RegistryTest
 
 class TestMerge(RegistryTest):
 
-    def testCompareNoDupes(self):
+    def testMerge(self):
         fileset = {
             "artists/genius/a1-leo": "leonardo",
             "artists/a2-pic": "picasso",
@@ -24,7 +24,7 @@ class TestMerge(RegistryTest):
         artists = "testing/artists"
         turtles = "testing/turtles"
         with FileSet("testing", fileset) as fs:
-            merge.merge(artists, turtles)
+            merge.merge_deep(artists, turtles)
 
             assert fs.all_files() ==  [
                 'testing/artists/a2-pic',

@@ -39,9 +39,6 @@ def _merge_files(dest_path, source_path, db:HashRegistry):
     for spath in sabspaths:
         _p,_s, s_full = db.hashForPath(spath, add=True)
 
-        if "raph" in spath.name:
-            print(f"----> {spath} :: {dhashes}")
-
         if s_full and s_full in fullhashes:
             pass # os.remove(spath)
         # let the user do removal afterwards

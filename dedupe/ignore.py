@@ -32,11 +32,9 @@ def should_ignore(itempath):
 
 def should_ignore_dir(itempath):
     res = [(Path(itempath)/p).exists() for p in _IGNORE_SPEC["beacon"]]
-    print(f"DIR -> {itempath} : {res}")
     return any(res)
 
 
 def should_ignore_name(itemname):
     res = [fnmatch.filter([itemname], pat) for pat in _IGNORE_SPEC["name"]]
-    print(f"NAME -> {itemname} : {res}")
     return any(res)
