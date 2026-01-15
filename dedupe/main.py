@@ -1,5 +1,5 @@
 import arguments
-from dedupe import compare, merge, registry
+from dedupe import compare, flatten, merge, registry
 
 
 
@@ -41,6 +41,11 @@ def main():
         """ Merge specified dir files files to current dir
         """
         merge.do_merge(".", args.source_dir, args.recursive)
+
+    elif args.action == "flatten":
+        """ Move all deep-nested non-duplicate files down a tree up to the top level directory
+        """
+        flatten.flatten(args.path)
 
 
 if __name__ == "__main__":

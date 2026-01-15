@@ -29,6 +29,9 @@ def parse_args(params=sys.argv[1:]):
     p_push.add_argument("dest_dir")
     p_push.add_argument("--recursive", "-R")
 
+    p_flatten = action.add_parser("flatten")
+    p_flatten.add_argument("path")
+
     args = parser.parse_args(params)
 
     return args
