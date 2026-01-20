@@ -7,10 +7,7 @@ _IGNORE_SPEC:dict[str,list[str]] = {
     "beacon" : [],
 }
 
-def load_ignores(path:str=''):
-    if path == '':
-        path = config.IGNORE_FILE
-
+def load_ignores(path:str):
     with open(path) as fh:
         for line in fh.readlines():
             line = line.strip()

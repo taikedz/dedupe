@@ -1,5 +1,5 @@
 import arguments
-from dedupe import compare, flatten, merge, registry
+from dedupe import compare, flatten, merge, registry, ignore
 
 
 
@@ -9,7 +9,9 @@ def main():
     if args.action is None:
         arguments.parse_args("-h")
 
-    elif args.action == "register":
+    ignore.load_ignores(args.ignore_file)
+
+    if args.action == "register":
         """ When you expect to have a number of large files to hash
         pre-register the files with this.
         """

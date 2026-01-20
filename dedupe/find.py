@@ -1,6 +1,7 @@
 """
-Given a folder, recurse down and add to a "dedupe.sqlite" file at top level
-Ignore any `dedupe.sqlite` files systematically
+Find all existing duplicates under a given path
+
+Given a folder, recurse down and add to registry
 
 Once all files added, query database for all paths that have a full-hash.
 

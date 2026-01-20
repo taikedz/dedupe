@@ -1,9 +1,15 @@
 import argparse
 import sys
 
+from dedupe import config
+
 
 def parse_args(params=sys.argv[1:]):
     parser = argparse.ArgumentParser()
+
+    parser.add_argument("--registry-file", default=config.GLOBAL_REGISTRY, help=f"Location of registry file to use. Default {config.GLOBAL_REGISTRY}")
+    parser.add_argument("--ignore-file", default=config.IGNORE_FILE, help=f"Location of ignore file to use. Default {config.IGNORE_FILE}")
+
     action = parser.add_subparsers(dest="action")
 
     p_reg = action.add_parser("register")
@@ -33,5 +39,8 @@ def parse_args(params=sys.argv[1:]):
     p_flatten.add_argument("path")
 
     args = parser.parse_args(params)
+
+    config.GLOBAL_REGISTRY = args.registry_file
+    config.IGNORE_FILE = args.ignore_file
 
     return args
