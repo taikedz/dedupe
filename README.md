@@ -19,6 +19,17 @@ dedupe hash .../path
 dedupe register %drop
 ```
 
+## Find
+
+You can point the tool at a directory, and get a summary of files found with duplicates:
+
+
+```sh
+dedupe find .../path
+```
+
+This will display grouped file paths where duplicates were found.
+
 ## Compare
 
 Compare specified dirs.
