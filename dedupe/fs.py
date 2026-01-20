@@ -3,6 +3,10 @@ import pathlib
 from typing import Generator
 
 
+class FileError(Exception):
+    pass
+
+
 def all_files(path):
     items = []
     for parent,_folders,files in os.walk(path):
@@ -83,4 +87,8 @@ def _zip_more(iter1:list[str], iter2:list[str]) -> Generator[tuple[str,str], Non
 def is_regular(path):
     """ Whether path is a regular file or folder, and is _not_ a symlink
     """
-    return not os.path.islink(path) and (os.path.isfile(path) or os.path.isdir(path))
+    if os.path.islink(path):
+        return False
+    if not os.path.exists(path):
+        raise FileError(f"Expected '{path}' to exist, but it does not.")
+    return (os.path.isfile(path) or os.path.isdir(path))
