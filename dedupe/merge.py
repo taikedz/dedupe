@@ -15,7 +15,7 @@ def do_merge(dest_path, source_path, recursive):
 
 def merge(dest_path, source_path):
     with HashRegistry() as db:
-        dest_all_files = fs.all_files(dest_path)
+        dest_all_files = fs.all_files(dest_path, regular_only=True)
         _merge_files(dest_path, source_path, db, dest_all_files)
 
 
@@ -62,7 +62,7 @@ def merge_deep(dest_dir, source_dir):
                 raise RuntimeError(f"{dest/rel_parent} already exists and is not a directory")
             os.makedirs(dest/rel_parent, exist_ok=True)
 
-            dest_all_files = fs.all_files(dest)
+            dest_all_files = fs.all_files(dest, regular_only=True)
             _merge_files(dest/rel_parent, source/rel_parent, db, dest_all_files)
 
             # Iterate the folders - if any should be ignored, remove them in-place

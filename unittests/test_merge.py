@@ -10,6 +10,7 @@ class TestMerge(RegistryTest):
             "artists/a2-pic": "picasso",
             "artists/a3-raph": "raphael",
             "artists/a4-miro": "miro",
+            "artists/a9-pico ->": "artists/modern/picasso",
 
             "artists/modern/picasso": "picasso",
             "artists/modern/dali": "dali",
@@ -29,6 +30,7 @@ class TestMerge(RegistryTest):
                 'testing/artists/a2-pic',
                 'testing/artists/a3-raph',
                 'testing/artists/a4-miro',
+                'testing/artists/a9-pico',
                 'testing/artists/genius/a1-leo',
                 'testing/artists/modern/dali',
                 'testing/artists/modern/picasso',

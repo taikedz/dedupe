@@ -7,11 +7,12 @@ class FileError(Exception):
     pass
 
 
-def all_files(path):
+def all_files(path, regular_only=False):
     items = []
     for parent,_folders,files in os.walk(path):
         items.extend([f"{parent}/{f}" for f in files])
-    [is_regular(f) for f in items] # just check them all now
+    if regular_only:
+        items = [f for f in items if is_regular(f)]
     return sorted(items)
 
 

@@ -10,9 +10,8 @@ class TestCompare(RegistryTest):
             "artists/2-pic": "picasso",
             "artists/3-raph": "raphael",
             "artists/4-miro": "miro",
-
-            # "artists/modern/picasso": "picasso",
-            # "artists/modern/dali": "dali",
+            # Symlink ignored altogether
+            "artists/9-link ->": "turtles/2-don",
 
             "turtles/1-leo": "leonardo",
             "turtles/2-don": "donatello",

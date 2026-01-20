@@ -2,7 +2,7 @@ import os
 import pathlib
 import sqlite3
 
-from dedupe import config, ignore
+from dedupe import config, ignore, fs
 import dedupe.hashutil as hashutil
 
 
@@ -61,7 +61,7 @@ class HashRegistry:
 
 
     def addFile(self, path):
-        if ignore.should_ignore(path):
+        if ignore.should_ignore(path) or not fs.is_regular(path):
             return
 
         path = str(pathlib.Path(path).absolute())

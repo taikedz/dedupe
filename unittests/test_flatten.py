@@ -8,6 +8,7 @@ class TestFlatten(RegistryTest):
         fileset = {
             "readme.txt": "hi",
             "license.txt": "gpl",
+            "version-link.c ->": "src/version.c",
             "old-src/name.c": "alice",
             "old-src/readme.txt": "hi",
             "old-src/version/v.c": "ZERO",
@@ -25,5 +26,6 @@ class TestFlatten(RegistryTest):
                 "testing/old-src/readme.txt",
                 "testing/readme.txt",
                 "testing/v.c",
+                "testing/version-link.c",
                 "testing/version.c",
             ]
