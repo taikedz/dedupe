@@ -11,6 +11,7 @@ def all_files(path):
     items = []
     for parent,_folders,files in os.walk(path):
         items.extend([f"{parent}/{f}" for f in files])
+    [is_regular(f) for f in items] # just check them all now
     return sorted(items)
 
 

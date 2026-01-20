@@ -15,19 +15,19 @@ def do_merge(dest_path, source_path, recursive):
 
 def merge(dest_path, source_path):
     with HashRegistry() as db:
-        _merge_files(dest_path, source_path, db, dest_path)
+        dest_all_files = fs.all_files(dest_path)
+        _merge_files(dest_path, source_path, db, dest_all_files)
 
 
-def _merge_files(dest_path, source_path, db:HashRegistry, dest_root):
+def _merge_files(dest_path, source_path, db:HashRegistry, dest_all_files):
     dest = Path(dest_path).absolute()
     source = Path(source_path).absolute()
 
-    # FIXME we check down, but not up to dest root!
-    dfiles = fs.all_files(dest_root)
-    dabspaths = [Path(f).absolute() for f in dfiles if Path(f).is_file()]
+    dabspaths = [Path(f).absolute() for f in dest_all_files if Path(f).is_file()]
 
     sfiles = [source/p for p in os.listdir(source)]
     sabspaths = [f.absolute() for f in sfiles if f.is_file()]
+    [fs.is_regular(f) for f in sabspaths]
 
     # Ensure all duplicate hashes have been calculated upfront
     [db.addFile(path) for path in dabspaths+sabspaths if not ignore.should_ignore(path)]
@@ -62,8 +62,8 @@ def merge_deep(dest_dir, source_dir):
                 raise RuntimeError(f"{dest/rel_parent} already exists and is not a directory")
             os.makedirs(dest/rel_parent, exist_ok=True)
 
-            # FIXME source must compare against all hashes from root of merge, not just deep dest
-            _merge_files(dest/rel_parent, source/rel_parent, db, dest)
+            dest_all_files = fs.all_files(dest)
+            _merge_files(dest/rel_parent, source/rel_parent, db, dest_all_files)
 
             # Iterate the folders - if any should be ignored, remove them in-place
             #  from the folders list, to avoid descending into them
@@ -85,4 +85,5 @@ def _getUniqueName(file:Path):
         if not newname.exists():
             return newname
         x +=1
-        assert x <= maxiter, f"Could not generate new name for {file} beyond {maxiter} tries"
+        assert x <= maxiter, f"Could not generate new name for {str(parent/file)} beyond {maxiter} tries"
+
