@@ -47,6 +47,10 @@ class HashRegistry:
         return [x for x in self._cursor.execute("SELECT path,shorthash,hash FROM HashedFiles")]
 
 
+    def allDupeEntries(self):
+        return [x for x in self._cursor.execute("SELECT path,hash FROM HashedFiles WHERE hash<>?", ("",))]
+
+
     def hashForPath(self, path, add=False) -> tuple[str,str,str]:
         abspath = str(pathlib.Path(path).absolute())
         res = [x for x in self._cursor.execute("SELECT path,shorthash,hash FROM HashedFiles WHERE path=?", (abspath,)) ]
