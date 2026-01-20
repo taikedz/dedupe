@@ -1,7 +1,6 @@
 from argparse import Namespace
 from dedupe import compare, registry
-from unittests.makefiles import FileSet
-from unittests.util import RegistryTest
+from unittests.util import RegistryTest, FileSet
 
 
 class TestCompare(RegistryTest):

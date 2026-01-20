@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 from dedupe import ignore, registry
-from unittests.makefiles import FileSet
+from unittests.util import FileSet
 
 
 class TestIgnore:

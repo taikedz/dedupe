@@ -1,6 +1,5 @@
 from dedupe import merge
-from unittests.makefiles import FileSet
-from unittests.util import RegistryTest
+from unittests.util import RegistryTest, FileSet
 
 
 class TestMerge(RegistryTest):

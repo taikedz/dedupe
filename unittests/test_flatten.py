@@ -1,6 +1,5 @@
 from dedupe import flatten
-from unittests.makefiles import FileSet
-from unittests.util import RegistryTest
+from unittests.util import RegistryTest, FileSet
 
 
 class TestFlatten(RegistryTest):
