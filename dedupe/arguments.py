@@ -38,6 +38,9 @@ def parse_args(params=sys.argv[1:]):
     p_flatten = action.add_parser("flatten")
     p_flatten.add_argument("path")
 
+    p_find = action.add_parser("find")
+    p_find.add_argument("path")
+
     args = parser.parse_args(params)
 
     config.GLOBAL_REGISTRY = args.registry_file

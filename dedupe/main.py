@@ -1,6 +1,5 @@
 import arguments
-from dedupe import compare, flatten, merge, registry, ignore
-
+from dedupe import compare, flatten, merge, registry, ignore, find
 
 
 def main():
@@ -48,6 +47,9 @@ def main():
         """ Move all deep-nested non-duplicate files down a tree up to the top level directory
         """
         flatten.flatten(args.path)
+
+    elif args.action == "find":
+        find.run_find_duplicates(args.path)
 
 
 if __name__ == "__main__":

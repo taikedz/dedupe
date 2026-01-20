@@ -1,11 +1,17 @@
-"""
-Find all existing duplicates under a given path
+from dedupe import registry
 
-Given a folder, recurse down and add to registry
+def run_find_duplicates(path:str):
+    with registry.HashRegistry() as db:
+        db.registerDir(path)
+        all_dupes = db.allDupeEntries()
 
-Once all files added, query database for all paths that have a full-hash.
+    dupe_groups = {}
+    for p,h in all_dupes:
+        if h not in dupe_groups:
+            dupe_groups[h] = []
+        dupe_groups[h].append(p)
 
-Get all full hashes, reduce to unique
+    for h, pathlist in dupe_groups.items():
+        print(f"=== {h} ===")
+        print("- " + "\n- ".join(pathlist))
 
-For each hash, query database for paths
-"""

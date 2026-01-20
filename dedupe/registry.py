@@ -68,7 +68,7 @@ class HashRegistry:
         if ignore.should_ignore(path) or not fs.is_regular(path):
             return
 
-        path = str(pathlib.Path(path).absolute())
+        path = str(pathlib.Path(path).absolute().resolve())
 
         new_short_hash = hashutil.shortHash(path)
         existing_files = [x for x in self._cursor.execute("SELECT rowid,path,hash FROM HashedFiles WHERE shorthash=?", (new_short_hash,)) ]
