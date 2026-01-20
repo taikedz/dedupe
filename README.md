@@ -69,13 +69,17 @@ A layout with N-depth diretories
              |
              +-- subfileN (hash=ghi)
 
-Becomes flattened, with hash-duplicates removed.
+Becomes flattened, with hash-duplicates left in-place.
 
     maindir
     |
     +-- file1 (hash=abc)
     +-- file2 (hash=def)
     +-- subfileN (hash=ghi)
+    |
+    +-- dir1/
+        |
+        +-- subfile1 (hash=def) # was not moved up, due to being a duplicate
 
 
 ```
@@ -86,7 +90,7 @@ There are two ways to identify a path to ignore: by its name, or by the existenc
 
 Ignoring affects hash registration as well as comparison and merge. Any ignored items on the source path of a merge is left in place. Ignored items are not registered in the hash database.
 
-### direct names
+### direct names (name of item itself)
 
 Before processing a path, its name is checked against the ignore names list. If the path item's basename matches an entry in the `ignore-names` list, that path is not processed.
 
@@ -99,14 +103,11 @@ Example in `~/.dedupe/ignore` file
 .Trash/
 ```
 
-### beacons
+### beacons (deep-nested paths)
 
 Beacon paths are specified by starting with `./`
 
-On entering any dir, the beacon paths are checked:
-
-* If the current dir has any of the specified paths
-* then the whole directory is immediately skipped
+Before entering any dir, its beacon paths are checked: if the current dir has any of the specified paths then the whole directory is immediately skipped.
 
 Example in `~/.dedupe/ignore` file
 
@@ -114,4 +115,7 @@ Example in `~/.dedupe/ignore` file
 
 ./.git/
 ./*.venv/bin/activate
+
+# Place explicit files in folders you want to just ignore
+./.ignore
 ```

@@ -78,3 +78,9 @@ def _zip_more(iter1:list[str], iter2:list[str]) -> Generator[tuple[str,str], Non
 
         n1 += 1
         n2 += 1
+
+
+def is_regular(path):
+    """ Whether path is a regular file or folder, and is _not_ a symlink
+    """
+    return not os.path.islink(path) and (os.path.isfile(path) or os.path.isdir(path))

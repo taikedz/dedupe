@@ -1,5 +1,5 @@
 from argparse import Namespace
-from dedupe import compare
+from dedupe import compare, registry
 from unittests.makefiles import FileSet
 from unittests.util import RegistryTest
 
@@ -17,7 +17,7 @@ class TestCompare(RegistryTest):
 
             "turtles/1-leo": "leonardo",
             "turtles/2-don": "donatello",
-            "turtles/3-raph": "raphael",
+            "turtles/3-raf": "raphael",
             "turtles/4-mick": "michaelangelo",
         }
 
@@ -27,5 +27,5 @@ class TestCompare(RegistryTest):
         with FileSet("testing", fileset):
             assert compare._compare(args) == {
                 '/home/tai/git/github.com/taikedz/dedupe/testing/artists/1-leo': ['/home/tai/git/github.com/taikedz/dedupe/testing/turtles/1-leo'],
-                '/home/tai/git/github.com/taikedz/dedupe/testing/artists/3-raph': ['/home/tai/git/github.com/taikedz/dedupe/testing/turtles/3-raph'],
+                '/home/tai/git/github.com/taikedz/dedupe/testing/artists/3-raph': ['/home/tai/git/github.com/taikedz/dedupe/testing/turtles/3-raf'],
             }
