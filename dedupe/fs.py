@@ -18,7 +18,7 @@ def all_files(path):
 class PathOp(pathlib.Path):
 
     def absolute(self):
-        return PathOp(pathlib.Path.absolute(self))
+        return PathOp(pathlib.Path.absolute(self).resolve())
     
 
     def path_parts(self):
@@ -93,3 +93,4 @@ def is_regular(path):
     if not os.path.exists(path):
         raise FileError(f"Expected '{path}' to exist, but it does not.")
     return (os.path.isfile(path) or os.path.isdir(path))
+

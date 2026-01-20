@@ -30,6 +30,7 @@ class RegistryTest(unittest.TestCase):
 
 class FileSet:
     def __init__(self, holddir:str, files:dict[str,str]):
+        assert not fs.PathOp(holddir).hasChildOrIsSame("."), "You're going to wreck this directory."
         self._hdir = Path(holddir)
         self._fileset = files
 
@@ -48,8 +49,12 @@ class FileSet:
             path = self._hdir/path
             parent = path.parent
             os.makedirs(parent, exist_ok=True)
-            with open(path, 'w') as fh:
-                fh.write(data)
+            s_path = str(path)
+            if s_path.endswith("->"):
+                os.symlink(data, s_path[:-2].strip())
+            else:
+                with open(path, 'w') as fh:
+                    fh.write(data)
 
 
     def delete_files(self):
@@ -58,3 +63,4 @@ class FileSet:
 
     def all_files(self) -> list[str]:
         return fs.all_files(self._hdir)
+
