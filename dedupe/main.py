@@ -31,7 +31,8 @@ def main():
         """ Pull new source dir files into dest dir
         Existing (duplicate) files are left in-place
         """
-        merge.do_merge(args.dest_dir, args.source_dir, args.recursive)
+        for source in args.source_dir:
+            merge.do_merge(args.dest_dir, source, args.recursive)
 
     elif args.action == "push":
         """ Merge current dir files to specified dir
@@ -41,7 +42,8 @@ def main():
     elif args.action == "pull":
         """ Merge specified dir files files to current dir
         """
-        merge.do_merge(".", args.source_dir, args.recursive)
+        for source in args.source_dir:
+            merge.do_merge(".", source, args.recursive)
 
     elif args.action == "flatten":
         """ Move all deep-nested non-duplicate files down a tree up to the top level directory
