@@ -60,9 +60,9 @@ class HashRegistry:
         else:
             if not add:
                 return None
-            self.addFile(path)
-            hashval = self.hashForPath(path, add=False)
-            assert hashval, f"Failed to register {path}"
+            self.addFile(abspath)
+            hashval = self.hashForPath(abspath, add=False)
+            assert hashval, f"Failed to register {abspath}"
             return hashval
 
 
