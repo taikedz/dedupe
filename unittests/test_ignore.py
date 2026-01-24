@@ -32,6 +32,6 @@ class TestIgnore:
                 with registry.HashRegistry() as db:
                     db.registerDir("testing")
                     registered_files = [x[0] for x in db._cursor.execute("SELECT path FROM HashedFiles") ]
-                    assert registered_files == [str(Path(f).absolute()) for f in ["testing/info.md", "testing/readme.txt"]]
+                    assert sorted(registered_files) == [str(Path(f).absolute()) for f in ["testing/info.md", "testing/readme.txt"]]
         finally:
             os.remove(ignorefile)
