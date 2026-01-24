@@ -52,7 +52,7 @@ class HashRegistry:
 
 
     def hashForPath(self, path, add=False) -> tuple[str,str,str]:
-        abspath = str(pathlib.Path(path).absolute())
+        abspath = str(pathlib.Path(path).absolute().resolve())
         res = [x for x in self._cursor.execute("SELECT path,shorthash,hash FROM HashedFiles WHERE path=?", (abspath,)) ]
         assert len(res) <= 1, f"Hash list for single path should have no more than one. Found: {res}"
         if res:
@@ -61,7 +61,9 @@ class HashRegistry:
             if not add:
                 return None
             self.addFile(path)
-            return self.hashForPath(path, add=False)
+            hashval = self.hashForPath(path, add=False)
+            assert hashval, f"Failed to register {path}"
+            return hashval
 
 
     def addFile(self, path):
